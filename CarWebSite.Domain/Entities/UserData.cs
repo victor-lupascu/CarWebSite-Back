@@ -33,6 +33,6 @@ namespace CarWebSite.Domain.Entities
         [DataType(DataType.Date)]
         public DateTime? RegisteredOn { get; set; }
 
-
+        public ICollection<Announcement> Announcements { get; set; } = new List<Announcement>();
     }
 }
