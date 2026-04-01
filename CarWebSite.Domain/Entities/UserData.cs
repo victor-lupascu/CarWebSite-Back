@@ -22,7 +22,7 @@ namespace CarWebSite.Domain.Entities
         [StringLength(200,MinimumLength = 8)]
         public string Password { get; set; } = string.Empty;
 
-        [StringLength(9)]
+        [StringLength(13)]
         public string? PhoneNumber { get; set; }
 
         [StringLength(50)]
@@ -31,8 +31,9 @@ namespace CarWebSite.Domain.Entities
         public UserRole Role { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime? RegisteredOn { get; set; }
+        public DateTime RegisteredOn { get; set; }
 
         public ICollection<Announcement> Announcements { get; set; } = new List<Announcement>();
+        public ICollection<FavoriteData> Favorites { get; set; } = new List<FavoriteData>();
     }
 }
