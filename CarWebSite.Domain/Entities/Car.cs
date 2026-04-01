@@ -1,7 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CarWebSite.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CarWebSite.Domain.Enums;
-using Microsoft.VisualBasic.FileIO;
 
 namespace CarWebSite.Domain.Entities
 {
@@ -29,6 +28,24 @@ namespace CarWebSite.Domain.Entities
 
         [StringLength(1000)]
         public string Description { get; set; } = string.Empty;
+
+        public BodyType BodyType { get; set; }
+
+        [StringLength(30)]
+        public string? Color { get; set; }
+
+        public int? Doors { get; set; }
+
+        public int? Seats { get; set; }
+
+        [StringLength(20)]
+        public string? EngineSize { get; set; }
+
+        public int? Horsepower { get; set; }
+
+        [StringLength(17)]
+        public string? VIN { get; set; }
+
 
         public int BrandId { get; set; }
         public Brand Brand { get; set; } = null!;
