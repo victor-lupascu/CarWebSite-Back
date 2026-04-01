@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CarWebSite.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarWebSite.Domain.Entities
@@ -13,9 +14,17 @@ namespace CarWebSite.Domain.Entities
         [StringLength(100)]
         public string Title { get; set; } = string.Empty;
 
-        public bool IsActive { get; set; } = true;
+        public ListingStatus Status { get; set; } = ListingStatus.Active;
 
-        public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
+        public bool Negotiable { get; set; } = false;
+
+        public bool ShowPhone { get; set; } = true;
+
+        public int Views { get; set; } = 0;
+
+        public int Inquiries { get; set; } = 0;
+
+        public DateTime PublishedAt { get; set; } 
 
         public int UserDataId { get; set; }
         public UserData UserData { get; set; } = null!;
