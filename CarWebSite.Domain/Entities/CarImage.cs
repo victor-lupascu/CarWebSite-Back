@@ -12,6 +12,8 @@ namespace CarWebSite.Domain.Entities
         [Required]
         public string Url { get; set; } = string.Empty;
 
+        public bool IsCover { get; set; } = false;
+
         public int CarId { get; set; }
         public Car Car { get; set; } = null!;
     }
