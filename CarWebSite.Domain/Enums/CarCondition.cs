@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CarWebSite.Domain.Enums
+﻿namespace CarWebSite.Domain.Enums
 {
-    public enum CarCondition { Nou, Rulat, Accidentat }
+    public enum CarCondition
+    {
+        New = 0,
+        LikeNew = 1,
+        Excellent = 2,
+        Good = 3,
+        Fair = 4,
+        PartsOnly = 5,
+    }
 }

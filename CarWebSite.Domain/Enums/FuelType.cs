@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CarWebSite.Domain.Enums
+﻿namespace CarWebSite.Domain.Enums
 {
-    public enum FuelType { Benzina, Motorina, Hibrid, Electric, GPL }
+    public enum FuelType 
+    {
+        Petrol = 0,
+        Diesel = 1,
+        Hybrid = 2,
+        Electric = 3,
+        LPG = 4,
+        CNG = 5
+    }
 }

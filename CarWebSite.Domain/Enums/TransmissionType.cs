@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CarWebSite.Domain.Enums
+﻿namespace CarWebSite.Domain.Enums
 {
-    public enum TransmissionType { Manuala, Automata }
+    public enum TransmissionType 
+    {
+        Automatic = 0,
+        Manual = 1,
+        SemiAutomatic = 2,
+        CVT = 3,
+    }
 }
