@@ -1,4 +1,5 @@
 using CarWebSite.Domain.Enums;
+using CarWebSite.Domain.Models.CarImage;
 
 namespace CarWebSite.Domain.Models.Announcement
 {
@@ -26,5 +27,7 @@ namespace CarWebSite.Domain.Models.Announcement
         public string? EngineSize { get; set; }
         public int? Horsepower { get; set; }
         public string? VIN { get; set; }
+        public int? BrandId { get; set; }
+        public List<CarImageCreateDto>? Images { get; set; }
     }
 }

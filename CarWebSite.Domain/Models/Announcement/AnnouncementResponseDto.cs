@@ -1,4 +1,6 @@
 using CarWebSite.Domain.Enums;
+using CarWebSite.Domain.Models.Brand;
+using CarWebSite.Domain.Models.CarImage;
 
 namespace CarWebSite.Domain.Models.Announcement
 {
@@ -21,7 +23,7 @@ namespace CarWebSite.Domain.Models.Announcement
 
         // Car fields
         public int CarId { get; set; }
-        public string BrandName { get; set; } = string.Empty;
+        public BrandResponseDto Brand { get; set; } = new BrandResponseDto();
         public string Model { get; set; } = string.Empty;
         public int Year { get; set; }
         public int Mileage { get; set; }
@@ -37,6 +39,6 @@ namespace CarWebSite.Domain.Models.Announcement
         public string? EngineSize { get; set; }
         public int? Horsepower { get; set; }
         public string? VIN { get; set; }
-        public List<string> ImageUrls { get; set; } = new List<string>();
+        public List<CarImageResponseDto> Images { get; set; } = new List<CarImageResponseDto>();
     }
 }
