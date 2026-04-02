@@ -33,11 +33,20 @@ namespace CarWebSite.DataAccess.Migrations
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<int>("Inquiries")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Negotiable")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("ShowPhone")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -45,6 +54,9 @@ namespace CarWebSite.DataAccess.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("UserDataId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Views")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -82,7 +94,13 @@ namespace CarWebSite.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BodyType")
+                        .HasColumnType("int");
+
                     b.Property<int>("BrandId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Color")
                         .HasColumnType("int");
 
                     b.Property<int>("Condition")
@@ -93,7 +111,20 @@ namespace CarWebSite.DataAccess.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<int?>("Doors")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DriveType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EngineSize")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<int>("FuelType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Horsepower")
                         .HasColumnType("int");
 
                     b.Property<int>("Mileage")
@@ -107,8 +138,15 @@ namespace CarWebSite.DataAccess.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int?>("Seats")
+                        .HasColumnType("int");
+
                     b.Property<int>("Transmission")
                         .HasColumnType("int");
+
+                    b.Property<string>("VIN")
+                        .HasMaxLength(17)
+                        .HasColumnType("nvarchar(17)");
 
                     b.Property<int>("Year")
                         .HasColumnType("int");
@@ -131,6 +169,9 @@ namespace CarWebSite.DataAccess.Migrations
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsCover")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -140,6 +181,66 @@ namespace CarWebSite.DataAccess.Migrations
                     b.HasIndex("CarId");
 
                     b.ToTable("CarImages");
+                });
+
+            modelBuilder.Entity("CarWebSite.Domain.Entities.ContactMessageData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<int>("Subject")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContactMessages");
+                });
+
+            modelBuilder.Entity("CarWebSite.Domain.Entities.FavoriteData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserDataId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId");
+
+                    b.HasIndex("UserDataId");
+
+                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("CarWebSite.Domain.Entities.UserData", b =>
@@ -170,10 +271,10 @@ namespace CarWebSite.DataAccess.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasMaxLength(9)
-                        .HasColumnType("nvarchar(9)");
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                    b.Property<DateTime?>("RegisteredOn")
+                    b.Property<DateTime>("RegisteredOn")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Role")
@@ -225,6 +326,25 @@ namespace CarWebSite.DataAccess.Migrations
                     b.Navigation("Car");
                 });
 
+            modelBuilder.Entity("CarWebSite.Domain.Entities.FavoriteData", b =>
+                {
+                    b.HasOne("CarWebSite.Domain.Entities.Car", "Car")
+                        .WithMany()
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CarWebSite.Domain.Entities.UserData", "UserData")
+                        .WithMany("Favorites")
+                        .HasForeignKey("UserDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+
+                    b.Navigation("UserData");
+                });
+
             modelBuilder.Entity("CarWebSite.Domain.Entities.Brand", b =>
                 {
                     b.Navigation("Cars");
@@ -240,6 +360,8 @@ namespace CarWebSite.DataAccess.Migrations
             modelBuilder.Entity("CarWebSite.Domain.Entities.UserData", b =>
                 {
                     b.Navigation("Announcements");
+
+                    b.Navigation("Favorites");
                 });
 #pragma warning restore 612, 618
         }
