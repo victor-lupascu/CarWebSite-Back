@@ -30,11 +30,9 @@ namespace CarWebSite.Domain.Entities
         public string Description { get; set; } = string.Empty;
 
         public BodyType BodyType { get; set; }
-
-        [StringLength(30)]
-        public string? Color { get; set; }
-
-        public int? Doors { get; set; }
+        public Enums.DriveType DriveType { get; set; }
+        public ColorCategory? Color { get; set; }
+        public NumberOfDoors? Doors { get; set; }
 
         public int? Seats { get; set; }
 

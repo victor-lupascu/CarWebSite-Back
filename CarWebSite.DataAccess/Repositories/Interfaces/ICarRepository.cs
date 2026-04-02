@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CarWebSite.Domain.Entities;
 
 namespace CarWebSite.DataAccess.Repositories.Interfaces
 {
-    internal class ICarRepository
+    public interface ICarRepository : IGenericRepository<Car>
     {
     }
 }

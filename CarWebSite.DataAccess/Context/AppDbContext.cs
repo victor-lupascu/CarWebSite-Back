@@ -12,5 +12,7 @@ namespace CarWebSite.DataAccess.Context
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Announcement> Announcements { get; set; }
         public DbSet<CarImage> CarImages { get; set; }
+        public DbSet<FavoriteData> Favorites { get; set; }
+        public DbSet<ContactMessageData> ContactMessages { get; set; }
     }
 }
