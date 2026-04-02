@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CarWebSite.BusinessLayer\CarWebSite.BusinessLayer.csproj" />
     <ProjectReference Include="..\CarWebSite.DataAccess\CarWebSite.DataAccess.csproj" />
   </ItemGroup>
 
