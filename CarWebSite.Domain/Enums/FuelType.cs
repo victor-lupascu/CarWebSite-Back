@@ -7,6 +7,7 @@
         Hybrid = 2,
         Electric = 3,
         LPG = 4,
-        CNG = 5
+        CNG = 5,
+        Hydrogen = 6
     }
 }
