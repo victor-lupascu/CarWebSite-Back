@@ -17,9 +17,8 @@ namespace CarWebSite.Domain.Models.User
         [StringLength(200, MinimumLength = 8)]
         public string Password { get; set; } = string.Empty;
 
-        [Required]
-        [StringLength(9)]
-        public string PhoneNumber { get; set; } = string.Empty;
+        [StringLength(13)]
+        public string? PhoneNumber { get; set; }
 
         [StringLength(50)]
         public string City { get; set; } = string.Empty;
