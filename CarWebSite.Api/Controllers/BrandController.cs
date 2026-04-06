@@ -1,4 +1,4 @@
-﻿using CarWebSite.BusinessLayer.Structure;
+﻿using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,45 +8,38 @@ namespace CarWebSite.Api.Controllers
     [Route("api/[controller]")]
     public class BrandController : ControllerBase
     {
-        private readonly BrandExecution _brandExecution;
+        private readonly IBrandAction _brandAction;
 
-        public BrandController(BrandExecution brandExecution)
+        public BrandController(IBrandAction brandAction)
         {
-            _brandExecution = brandExecution;
+            _brandAction = brandAction;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var brands = await _brandExecution.GetAllBrandsAsync();
+            var brands = await _brandAction.GetAllAsync();
             return Ok(brands);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var brand = await _brandExecution.GetBrandByIdAsync(id);
+            var brand = await _brandAction.GetByIdAsync(id);
             return brand == null ? NotFound() : Ok(brand);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Brand brand)
         {
-            await _brandExecution.CreateBrandAsync(brand);
-            return Ok();
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Brand brand)
-        {
-            await _brandExecution.UpdateBrandAsync(brand);
+            await _brandAction.AddAsync(brand);
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _brandExecution.DeleteBrandAsync(id);
+            await _brandAction.DeleteAsync(id);
             return Ok();
         }
     }
