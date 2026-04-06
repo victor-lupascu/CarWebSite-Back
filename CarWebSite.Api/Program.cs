@@ -3,7 +3,6 @@ using CarWebSite.DataAccess.Repositories.Implementations;
 using CarWebSite.DataAccess.Repositories.Interfaces;
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.BusinessLayer.Core;
-using CarWebSite.BusinessLayer.Structure;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,8 +24,6 @@ builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 // Business Layer
 builder.Services.AddScoped<IAnnouncementAction, AnnouncementActions>();
 builder.Services.AddScoped<IBrandAction, BrandActions>();
-builder.Services.AddScoped<AnnouncementExecution>();
-builder.Services.AddScoped<BrandExecution>();
 
 // CORS
 builder.Services.AddCors(options =>
@@ -37,7 +34,12 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

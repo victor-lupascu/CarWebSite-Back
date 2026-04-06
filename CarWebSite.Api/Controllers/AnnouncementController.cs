@@ -1,5 +1,5 @@
-﻿using CarWebSite.BusinessLayer.Structure;
-using CarWebSite.Domain.Entities;
+﻿using CarWebSite.BusinessLayer.Interfaces;
+using CarWebSite.Domain.Models.Announcement;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWebSite.Api.Controllers
@@ -8,53 +8,39 @@ namespace CarWebSite.Api.Controllers
     [Route("api/[controller]")]
     public class AnnouncementController : ControllerBase
     {
-        private readonly AnnouncementExecution _announcementExecution;
+        private readonly IAnnouncementAction _announcementAction;
 
-        public AnnouncementController(AnnouncementExecution announcementExecution)
+        public AnnouncementController(IAnnouncementAction announcementAction)
         {
-            _announcementExecution = announcementExecution;
+            _announcementAction = announcementAction;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var announcements = await _announcementExecution.GetAllAnnouncementsAsync();
-            return Ok(announcements);
-        }
-
-        [HttpGet("details")]
-        public async Task<IActionResult> GetAllWithDetails()
-        {
-            var announcements = await _announcementExecution.GetAllWithDetailsAsync();
+            var announcements = await _announcementAction.GetAllAnnouncementAction();
             return Ok(announcements);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var announcement = await _announcementExecution.GetAnnouncementByIdAsync(id);
+            var announcement = await _announcementAction.GetAnnouncementByIdAction(id);
             return announcement == null ? NotFound() : Ok(announcement);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Announcement announcement)
+        public async Task<IActionResult> Create([FromBody] AnnouncementCreateDto data)
         {
-            await _announcementExecution.CreateAnnouncementAsync(announcement);
-            return Ok();
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Announcement announcement)
-        {
-            await _announcementExecution.UpdateAnnouncementAsync(announcement);
-            return Ok();
+            var response = await _announcementAction.CreateAnnouncementAction(data);
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _announcementExecution.DeleteAnnouncementAsync(id);
-            return Ok();
+            var response = await _announcementAction.DeleteAnnouncementAction(id);
+            return Ok(response);
         }
     }
 }
