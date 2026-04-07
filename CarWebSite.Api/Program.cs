@@ -24,6 +24,8 @@ builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 // Business Layer
 builder.Services.AddScoped<IAnnouncementAction, AnnouncementActions>();
 builder.Services.AddScoped<IBrandAction, BrandActions>();
+builder.Services.AddScoped<IContactMessageAction, ContactMessageActions>();
+builder.Services.AddScoped<ICarImageAction, CarImageActions>();
 
 // CORS
 builder.Services.AddCors(options =>
