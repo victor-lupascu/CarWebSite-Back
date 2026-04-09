@@ -27,6 +27,7 @@ builder.Services.AddScoped<IBrandAction, BrandActions>();
 builder.Services.AddScoped<IContactMessageAction, ContactMessageActions>();
 builder.Services.AddScoped<ICarImageAction, CarImageActions>();
 builder.Services.AddScoped<ICarAction, CarActions>();
+builder.Services.AddScoped<IFavoriteAction, FavoriteActions>();
 
 // CORS
 builder.Services.AddCors(options =>
