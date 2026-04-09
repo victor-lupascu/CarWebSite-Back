@@ -19,5 +19,11 @@ namespace CarWebSite.DataAccess.Repositories.Implementations
                     .ThenInclude(c => c.Images)
                 .ToListAsync();
         }
+
+        public async Task<FavoriteData?> GetByUserAndCarAsync(int userId, int carId)
+        {
+            return await _context.Favorites
+                .FirstOrDefaultAsync(f => f.UserDataId == userId && f.CarId == carId);
+        }
     }
 }
