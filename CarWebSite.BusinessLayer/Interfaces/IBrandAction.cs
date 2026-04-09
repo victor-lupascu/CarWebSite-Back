@@ -1,13 +1,13 @@
-﻿using CarWebSite.Domain.Entities;
+using CarWebSite.Domain.Models.Brand;
+using CarWebSite.Domain.Models.Responses;
 
 namespace CarWebSite.BusinessLayer.Interfaces
 {
     public interface IBrandAction
     {
-        Task<IEnumerable<Brand>> GetAllAsync();
-        Task<Brand?> GetByIdAsync(int id);
-        Task AddAsync(Brand brand);
-        Task UpdateAsync(Brand brand);
-        Task DeleteAsync(int id);
+        Task<List<BrandResponseDto>> GetAllBrandsAction();
+        Task<BrandResponseDto?> GetBrandByIdAction(int id);
+        Task<ActionResponse> CreateBrandAction(BrandCreateDto data);
+        Task<ActionResponse> DeleteBrandAction(int id);
     }
 }
