@@ -1,34 +1,56 @@
-using CarWebSite.DataAccess.Repositories.Interfaces;
-using CarWebSite.BusinessLayer.Interfaces;
+using CarWebSite.DataAccess.Context;
 using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Models.Brand;
 using CarWebSite.Domain.Models.Responses;
 
 namespace CarWebSite.BusinessLayer.Core
 {
-    public class BrandActions : IBrandAction
+    public class BrandActions
     {
-        private readonly IBrandRepository _repository;
+        protected BrandActions() { }
 
-        public BrandActions(IBrandRepository repository)
+        protected List<BrandResponseDto> GetAllBrandsActionExecution()
         {
-            _repository = repository;
+            var data = new List<BrandResponseDto>();
+            List<Brand> brands;
+
+            using (var db = new AppDbContext())
+            {
+                brands = db.Brands.ToList();
+            }
+
+            if (brands.Count <= 0) return data;
+
+            foreach (var item in brands)
+            {
+                data.Add(new BrandResponseDto
+                {
+                    Id = item.Id,
+                    Name = item.Name
+                });
+            }
+            return data;
         }
 
-        public async Task<List<BrandResponseDto>> GetAllBrandsAction()
+        protected BrandResponseDto? GetBrandByIdActionExecution(int id)
         {
-            var entities = await _repository.GetAllAsync();
-            return entities.Select(e => MapToDto(e)).ToList();
-        }
+            Brand? entity;
 
-        public async Task<BrandResponseDto?> GetBrandByIdAction(int id)
-        {
-            var entity = await _repository.GetByIdAsync(id);
+            using (var db = new AppDbContext())
+            {
+                entity = db.Brands.FirstOrDefault(b => b.Id == id);
+            }
+
             if (entity == null) return null;
-            return MapToDto(entity);
+
+            return new BrandResponseDto
+            {
+                Id = entity.Id,
+                Name = entity.Name
+            };
         }
 
-        public async Task<ActionResponse> CreateBrandAction(BrandCreateDto data)
+        protected ActionResponse CreateBrandActionExecution(BrandCreateDto data)
         {
             if (string.IsNullOrWhiteSpace(data.Name))
             {
@@ -39,58 +61,57 @@ namespace CarWebSite.BusinessLayer.Core
                 };
             }
 
-            var allBrands = await _repository.GetAllAsync();
-            if (allBrands.Any(b => b.Name.ToLower() == data.Name.ToLower()))
+            using (var db = new AppDbContext())
             {
-                return new ActionResponse
+                var existing = db.Brands
+                    .FirstOrDefault(b => b.Name.ToLower() == data.Name.ToLower());
+
+                if (existing != null)
                 {
-                    IsSuccess = false,
-                    Message = "Brand already exists."
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Brand already exists."
+                    };
+                }
+
+                var entity = new Brand
+                {
+                    Name = data.Name
                 };
+
+                db.Brands.Add(entity);
+                db.SaveChanges();
             }
-
-            var entity = new Brand
-            {
-                Name = data.Name
-            };
-
-            await _repository.AddAsync(entity);
-
             return new ActionResponse
             {
                 IsSuccess = true,
                 Message = "Brand created successfully."
             };
         }
-
-        public async Task<ActionResponse> DeleteBrandAction(int id)
+        
+        protected ActionResponse DeleteBrandActionExecution(int id)
         {
-            var entity = await _repository.GetByIdAsync(id);
-
-            if (entity == null)
+            using (var db = new AppDbContext())
             {
-                return new ActionResponse
+                var entity = db.Brands.FirstOrDefault(b => b.Id == id);
+                if(entity == null)
                 {
-                    IsSuccess = false,
-                    Message = "Brand not found."
-                };
-            }
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Brand not found"
+                    };
+                }
 
-            await _repository.DeleteAsync(id);
+                db.Brands.Remove(entity);
+                db.SaveChanges();
+            }
 
             return new ActionResponse
             {
                 IsSuccess = true,
                 Message = "Brand deleted successfully."
-            };
-        }
-
-        private BrandResponseDto MapToDto(Brand entity)
-        {
-            return new BrandResponseDto
-            {
-                Id = entity.Id,
-                Name = entity.Name
             };
         }
     }
