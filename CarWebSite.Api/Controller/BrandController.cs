@@ -1,46 +1,49 @@
+using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.Brand;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CarWebSite.Api.Controllers
+namespace CarWebSite.Api.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
     public class BrandController : ControllerBase
     {
-        private readonly IBrandAction _brandAction;
+        private IBrandAction _brandAction;
 
-        public BrandController(IBrandAction brandAction)
+        public BrandController()
         {
-            _brandAction = brandAction;
+            var bl = new BusinessLogic();
+            _brandAction = bl.BrandAction();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("getAll")]
+        public IActionResult GetAll()
         {
-            var brands = await _brandAction.GetAllBrandsAction();
+            var brands = _brandAction.GetAllBrandsAction();
             return Ok(brands);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet]
+        public IActionResult GetById(int id)
         {
-            var brand = await _brandAction.GetBrandByIdAction(id);
+            var brand = _brandAction.GetBrandByIdAction(id);
             return brand == null ? NotFound() : Ok(brand);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BrandCreateDto data)
+        public IActionResult Create([FromBody] BrandCreateDto data)
         {
-            var response = await _brandAction.CreateBrandAction(data);
+            var response = _brandAction.CreateBrandAction(data);
             return Ok(response);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete]
+        public IActionResult Delete(int id)
         {
-            var response = await _brandAction.DeleteBrandAction(id);
+            var response = _brandAction.DeleteBrandAction(id);
             return Ok(response);
         }
+
     }
 }
