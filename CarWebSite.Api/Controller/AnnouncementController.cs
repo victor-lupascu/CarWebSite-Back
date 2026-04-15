@@ -2,7 +2,7 @@
 using CarWebSite.Domain.Models.Announcement;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CarWebSite.Api.Controllers
+namespace CarWebSite.Api.Controller
 {
     [ApiController]
     [Route("api/[controller]")]

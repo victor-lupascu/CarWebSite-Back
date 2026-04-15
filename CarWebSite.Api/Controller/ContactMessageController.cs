@@ -2,7 +2,7 @@ using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.Contact;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CarWebSite.Api.Controllers
+namespace CarWebSite.Api.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
