@@ -1,21 +1,15 @@
-using CarWebSite.DataAccess.Repositories.Interfaces;
-using CarWebSite.BusinessLayer.Interfaces;
+using CarWebSite.DataAccess.Context;
 using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Models.Contact;
 using CarWebSite.Domain.Models.Responses;
 
 namespace CarWebSite.BusinessLayer.Core
 {
-    public class ContactMessageActions : IContactMessageAction
+    public class ContactMessageActions
     {
-        private readonly IContactMessageRepository _repository;
+        protected ContactMessageActions() { }
 
-        public ContactMessageActions(IContactMessageRepository repository)
-        {
-            _repository = repository;
-        }
-
-        public async Task<ActionResponse> SendMessageAction(ContactMessageCreateDto data)
+        protected ActionResponse SendMessageActionExecution(ContactMessageCreateDto data)
         {
             if (string.IsNullOrWhiteSpace(data.Name))
             {
@@ -44,16 +38,20 @@ namespace CarWebSite.BusinessLayer.Core
                 };
             }
 
-            var entity = new ContactMessageData
+            using (var db = new AppDbContext())
             {
-                Name = data.Name,
-                Email = data.Email,
-                Subject = data.Subject,
-                Message = data.Message,
-                CreatedAt = DateTime.UtcNow
-            };
+                var entity = new ContactMessageData
+                {
+                    Name = data.Name,
+                    Email = data.Email,
+                    Subject = data.Subject,
+                    Message = data.Message,
+                    CreatedAt = DateTime.UtcNow
+                };
 
-            await _repository.AddAsync(entity);
+                db.ContactMessages.Add(entity);
+                db.SaveChanges();
+            }
 
             return new ActionResponse
             {
