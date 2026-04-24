@@ -1,49 +1,79 @@
-﻿using CarWebSite.DataAccess.Repositories.Interfaces;
-using CarWebSite.BusinessLayer.Interfaces;
+﻿using CarWebSite.DataAccess.Context;
 using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Models.Favorite;
 using CarWebSite.Domain.Models.Car;
 using CarWebSite.Domain.Models.Brand;
 using CarWebSite.Domain.Models.CarImage;
 using CarWebSite.Domain.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarWebSite.BusinessLayer.Core
 {
-    public class FavoriteActions : IFavoriteAction
+    public class FavoriteActions
     {
-        private readonly IFavoriteRepository _repository;
+        protected FavoriteActions() { }
 
-        public FavoriteActions(IFavoriteRepository repository)
+        protected List<FavoriteResponseDto> GetUserFavoritesActionExecution(int userId)
         {
-            _repository = repository;
+            var data = new List<FavoriteResponseDto>();
+            List<FavoriteData> favorites;
+
+            using (var db = new AppDbContext())
+            {
+                favorites = db.Favorites
+                    .Where(f => f.UserDataId == userId)
+                    .Include(f => f.Car)
+                        .ThenInclude(c => c.Brand)
+                    .Include(f => f.Car)
+                        .ThenInclude(c => c.Images)
+                    .ToList();
+            }
+
+            if (favorites.Count <= 0) return data;
+
+            foreach (var item in favorites)
+            {
+                data.Add(MapToDto(item));
+            }
+
+            return data;
         }
 
-        public async Task<List<FavoriteResponseDto>> GetUserFavoritesAction(int userId)
+        protected ActionResponse AddFavoriteActionExecution(int carId, int userId)
         {
-            var entities = await _repository.GetByUserIdAsync(userId);
-            return entities.Select(e => MapToDto(e)).ToList();
-        }
-
-        public async Task<ActionResponse> AddFavoriteAction(int carId, int userId)
-        {
-            var existing = await _repository.GetByUserAndCarAsync(userId, carId);
-            if (existing != null)
+            if (carId <= 0 || userId <= 0)
             {
                 return new ActionResponse
                 {
                     IsSuccess = false,
-                    Message = "Car already in favorites."
+                    Message = "Invalid parameters."
                 };
             }
 
-            var favorite = new FavoriteData
+            using (var db = new AppDbContext())
             {
-                UserDataId = userId,
-                CarId = carId,
-                CreatedAt = DateTime.UtcNow
-            };
+                var existing = db.Favorites
+                    .FirstOrDefault(f => f.UserDataId == userId && f.CarId == carId);
 
-            await _repository.AddAsync(favorite);
+                if (existing != null)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Car already in favorites."
+                    };
+                }
+
+                var favorite = new FavoriteData
+                {
+                    UserDataId = userId,
+                    CarId = carId,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                db.Favorites.Add(favorite);
+                db.SaveChanges();
+            }
 
             return new ActionResponse
             {
@@ -52,20 +82,24 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
-        public async Task<ActionResponse> RemoveFavoriteAction(int id)
+        protected ActionResponse RemoveFavoriteActionExecution(int id)
         {
-            var entity = await _repository.GetByIdAsync(id);
-
-            if (entity == null)
+            using (var db = new AppDbContext())
             {
-                return new ActionResponse
-                {
-                    IsSuccess = false,
-                    Message = "Favorite not found."
-                };
-            }
+                var entity = db.Favorites.FirstOrDefault(f => f.Id == id);
 
-            await _repository.DeleteAsync(id);
+                if (entity == null)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Favorite not found."
+                    };
+                }
+
+                db.Favorites.Remove(entity);
+                db.SaveChanges();
+            }
 
             return new ActionResponse
             {
@@ -116,6 +150,3 @@ namespace CarWebSite.BusinessLayer.Core
         }
     }
 }
-
-
-

@@ -5,9 +5,9 @@ namespace CarWebSite.BusinessLayer.Interfaces
 {
     public interface IFavoriteAction
     {
-        Task<List<FavoriteResponseDto>> GetUserFavoritesAction(int userId);
-        Task<ActionResponse> AddFavoriteAction(int carId, int userId);
-        Task<ActionResponse> RemoveFavoriteAction(int id);
+        List<FavoriteResponseDto> GetUserFavoritesAction(int userId);
+        ActionResponse AddFavoriteAction(int carId, int userId);
+        ActionResponse RemoveFavoriteAction(int id);
     }
 }
 
