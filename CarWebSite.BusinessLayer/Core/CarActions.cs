@@ -1,31 +1,53 @@
-using CarWebSite.DataAccess.Repositories.Interfaces;
-using CarWebSite.BusinessLayer.Interfaces;
+using CarWebSite.DataAccess.Context;
 using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Models.Car;
 using CarWebSite.Domain.Models.Brand;
 using CarWebSite.Domain.Models.CarImage;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarWebSite.BusinessLayer.Core
 {
-    public class CarActions : ICarAction
+    public class CarActions
     {
-        private readonly ICarRepository _repository;
+        protected CarActions() { }
 
-        public CarActions(ICarRepository repository)
+        protected List<CarResponseDto> GetAllCarsActionExecution()
         {
-            _repository = repository;
+            var data = new List<CarResponseDto>();
+            List<Car> cars;
+
+            using (var db = new AppDbContext())
+            {
+                cars = db.Cars
+                    .Include(c => c.Brand)
+                    .Include(c => c.Images)
+                    .ToList();
+            }
+
+            if (cars.Count <= 0) return data;
+
+            foreach (var item in cars)
+            {
+                data.Add(MapToDto(item));
+            }
+
+            return data;
         }
 
-        public async Task<List<CarResponseDto>> GetAllCarsAction()
+        protected CarResponseDto? GetCarByIdActionExecution(int id)
         {
-            var entities = await _repository.GetAllWithDetailsAsync();
-            return entities.Select(e => MapToDto(e)).ToList();
-        }
+            Car? entity;
 
-        public async Task<CarResponseDto?> GetCarByIdAction(int id)
-        {
-            var entity = await _repository.GetByIdWithDetailsAsync(id);
+            using (var db = new AppDbContext())
+            {
+                entity = db.Cars
+                    .Include(c => c.Brand)
+                    .Include(c => c.Images)
+                    .FirstOrDefault(c => c.Id == id);
+            }
+
             if (entity == null) return null;
+
             return MapToDto(entity);
         }
 
