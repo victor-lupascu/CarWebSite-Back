@@ -1,47 +1,39 @@
-﻿using CarWebSite.BusinessLayer;
+using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
-using CarWebSite.Domain.Models.Announcement;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWebSite.Api.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AnnouncementController : ControllerBase
+    public class FavoriteController : ControllerBase
     {
-        private IAnnouncementAction _announcementAction;
+        private IFavoriteAction _favoriteAction;
 
-        public AnnouncementController()
+        public FavoriteController()
         {
             var bl = new BusinessLogic();
-            _announcementAction = bl.AnnouncementAction();
+            _favoriteAction = bl.FavoriteAction();
         }
 
-        [HttpGet("getAll")]
-        public IActionResult GetAll()
+        [HttpGet("{userId}")]
+        public IActionResult GetByUser(int userId)
         {
-            var announcements = _announcementAction.GetAllAnnouncementAction();
-            return Ok(announcements);
-        }
-
-        [HttpGet]
-        public IActionResult GetById(int id)
-        {
-            var announcement = _announcementAction.GetAnnouncementByIdAction(id);
-            return announcement == null ? NotFound() : Ok(announcement);
+            var favorites = _favoriteAction.GetUserFavoritesAction(userId);
+            return Ok(favorites);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] AnnouncementCreateDto data)
+        public IActionResult Add([FromQuery] int carId, [FromQuery] int userId)
         {
-            var response = _announcementAction.CreateAnnouncementAction(data);
+            var response = _favoriteAction.AddFavoriteAction(carId, userId);
             return Ok(response);
         }
 
-        [HttpDelete]
-        public IActionResult Delete(int id)
+        [HttpDelete("{id}")]
+        public IActionResult Remove(int id)
         {
-            var response = _announcementAction.DeleteAnnouncementAction(id);
+            var response = _favoriteAction.RemoveFavoriteAction(id);
             return Ok(response);
         }
     }
