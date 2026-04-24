@@ -27,6 +27,11 @@ namespace CarWebSite.BusinessLayer
             return new CarExecution();
         }
 
+        public IAnnouncementAction AnnouncementAction()
+        {
+            return new AnnouncementExecution();
+        }
+
         public IContactMessageAction ContactMessageAction()
         {
             return new ContactMessageExecution();
