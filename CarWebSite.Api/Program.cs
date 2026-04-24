@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DbSession — connection string accessible for direct Core DB access
+// DbSession ï¿½ connection string accessible for direct Core DB access
 DbSession.ConnectionString = builder.Configuration
     .GetConnectionString("DefaultConnection")!;
 
@@ -22,7 +22,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
-builder.Services.AddScoped<ICarImageRepository, CarImageRepository>();
 builder.Services.AddScoped<IContactMessageRepository, ContactMessageRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
