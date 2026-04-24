@@ -5,10 +5,10 @@ namespace CarWebSite.BusinessLayer.Interfaces
 {
     public interface IAnnouncementAction
     {
-        Task<List<AnnouncementResponseDto>> GetAllAnnouncementAction();
-        Task<AnnouncementResponseDto?> GetAnnouncementByIdAction(int id);
-        Task<ActionResponse> CreateAnnouncementAction(AnnouncementCreateDto data);
-        Task<ActionResponse> UpdateAnnouncementAction(AnnouncementUpdateDto data);
-        Task<ActionResponse> DeleteAnnouncementAction(int id);
+        List<AnnouncementResponseDto> GetAllAnnouncementAction();
+        AnnouncementResponseDto? GetAnnouncementByIdAction(int id);
+        ActionResponse CreateAnnouncementAction(AnnouncementCreateDto data);
+        ActionResponse UpdateAnnouncementAction(AnnouncementUpdateDto data);
+        ActionResponse DeleteAnnouncementAction(int id);
     }
 }

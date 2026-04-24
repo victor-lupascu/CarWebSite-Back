@@ -1,36 +1,63 @@
-﻿using CarWebSite.DataAccess.Repositories.Interfaces;
-using CarWebSite.BusinessLayer.Interfaces;
+﻿using CarWebSite.DataAccess.Context;
 using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Models.Announcement;
 using CarWebSite.Domain.Models.Brand;
 using CarWebSite.Domain.Models.CarImage;
 using CarWebSite.Domain.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarWebSite.BusinessLayer.Core
 {
-    public class AnnouncementActions : IAnnouncementAction
+    public class AnnouncementActions
     {
-        private readonly IAnnouncementRepository _repository;
+        protected AnnouncementActions() { }
 
-        public AnnouncementActions(IAnnouncementRepository repository)
+        protected List<AnnouncementResponseDto> GetAllAnnouncementActionExecution()
         {
-            _repository = repository;
+            var data = new List<AnnouncementResponseDto>();
+            List<Announcement> announcements;
+
+            using (var db = new AppDbContext())
+            {
+                announcements = db.Announcements
+                    .Include(a => a.Car)
+                        .ThenInclude(c => c.Brand)
+                    .Include(a => a.Car)
+                        .ThenInclude(c => c.Images)
+                    .Include(a => a.UserData)
+                    .ToList();
+            }
+
+            if (announcements.Count <= 0) return data;
+
+            foreach (var item in announcements)
+            {
+                data.Add(MapToDto(item));
+            }
+
+            return data;
         }
 
-        public async Task<List<AnnouncementResponseDto>> GetAllAnnouncementAction()
+        protected AnnouncementResponseDto? GetAnnouncementByIdActionExecution(int id)
         {
-            var entities = await _repository.GetAllWithDetailsAsync();
-            return entities.Select(e => MapToDto(e)).ToList();
-        }
+            Announcement? entity;
 
-        public async Task<AnnouncementResponseDto?> GetAnnouncementByIdAction(int id)
-        {
-            var entity = await _repository.GetByIdAsync(id);
+            using (var db = new AppDbContext())
+            {
+                entity = db.Announcements
+                    .Include(a => a.Car)
+                        .ThenInclude(c => c.Brand)
+                    .Include(a => a.Car)
+                        .ThenInclude(c => c.Images)
+                    .Include(a => a.UserData)
+                    .FirstOrDefault(a => a.Id == id);
+            }
+
             if (entity == null) return null;
             return MapToDto(entity);
         }
 
-        public async Task<ActionResponse> CreateAnnouncementAction(AnnouncementCreateDto data)
+        protected ActionResponse CreateAnnouncementActionExecution(AnnouncementCreateDto data)
         {
             if (string.IsNullOrWhiteSpace(data.Title))
             {
@@ -41,36 +68,40 @@ namespace CarWebSite.BusinessLayer.Core
                 };
             }
 
-            var car = new Car
+            using (var db = new AppDbContext())
             {
-                Model = data.Model,
-                Year = data.Year,
-                Mileage = data.Mileage,
-                Price = data.Price,
-                FuelType = data.FuelType,
-                Transmission = data.Transmission,
-                Condition = data.Condition,
-                Description = data.Description,
-                BodyType = data.BodyType,
-                Color = data.Color,
-                Doors = data.Doors,
-                Seats = data.Seats,
-                EngineSize = data.EngineSize,
-                Horsepower = data.Horsepower,
-                VIN = data.VIN,
-                BrandId = data.BrandId
-            };
+                var car = new Car
+                {
+                    Model = data.Model,
+                    Year = data.Year,
+                    Mileage = data.Mileage,
+                    Price = data.Price,
+                    FuelType = data.FuelType,
+                    Transmission = data.Transmission,
+                    Condition = data.Condition,
+                    Description = data.Description,
+                    BodyType = data.BodyType,
+                    Color = data.Color,
+                    Doors = data.Doors,
+                    Seats = data.Seats,
+                    EngineSize = data.EngineSize,
+                    Horsepower = data.Horsepower,
+                    VIN = data.VIN,
+                    BrandId = data.BrandId
+                };
 
-            var announcement = new Announcement
-            {
-                Title = data.Title,
-                Negotiable = data.Negotiable,
-                ShowPhone = data.ShowPhone,
-                PublishedAt = DateTime.UtcNow,
-                Car = car
-            };
+                var announcement = new Announcement
+                {
+                    Title = data.Title,
+                    Negotiable = data.Negotiable,
+                    ShowPhone = data.ShowPhone,
+                    PublishedAt = DateTime.UtcNow,
+                    Car = car
+                };
 
-            await _repository.AddAsync(announcement);
+                db.Announcements.Add(announcement);
+                db.SaveChanges();
+            }
 
             return new ActionResponse
             {
@@ -79,7 +110,7 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
-        public async Task<ActionResponse> UpdateAnnouncementAction(AnnouncementUpdateDto data)
+        protected ActionResponse UpdateAnnouncementActionExecution(AnnouncementUpdateDto data)
         {
             return new ActionResponse
             {
@@ -88,20 +119,24 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
-        public async Task<ActionResponse> DeleteAnnouncementAction(int id)
+        protected ActionResponse DeleteAnnouncementActionExecution(int id)
         {
-            var entity = await _repository.GetByIdAsync(id);
-
-            if (entity == null)
+            using (var db = new AppDbContext())
             {
-                return new ActionResponse
-                {
-                    IsSuccess = false,
-                    Message = "Announcement not found."
-                };
-            }
+                var entity = db.Announcements.FirstOrDefault(a => a.Id == id);
 
-            await _repository.DeleteAsync(id);
+                if (entity == null)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Announcement not found."
+                    };
+                }
+
+                db.Announcements.Remove(entity);
+                db.SaveChanges();
+            }
 
             return new ActionResponse
             {
@@ -136,7 +171,7 @@ namespace CarWebSite.BusinessLayer.Core
                 Description = entity.Car?.Description ?? "",
                 BodyType = entity.Car?.BodyType ?? 0,
                 Color = entity.Car?.Color?.ToString(),
-                Doors = entity.Car?.Doors.HasValue == true ? (int?)entity.Car.Doors.Value : null,   
+                Doors = entity.Car?.Doors.HasValue == true ? (int?)entity.Car.Doors.Value : null,
                 Seats = entity.Car?.Seats,
                 EngineSize = entity.Car?.EngineSize,
                 Horsepower = entity.Car?.Horsepower,
@@ -157,4 +192,3 @@ namespace CarWebSite.BusinessLayer.Core
         }
     }
 }
-
