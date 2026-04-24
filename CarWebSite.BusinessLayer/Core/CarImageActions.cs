@@ -1,27 +1,43 @@
-using CarWebSite.DataAccess.Repositories.Interfaces;
-using CarWebSite.BusinessLayer.Interfaces;
+using CarWebSite.DataAccess.Context;
 using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Models.CarImage;
 using CarWebSite.Domain.Models.Responses;
 
 namespace CarWebSite.BusinessLayer.Core
 {
-    public class CarImageActions : ICarImageAction
+    public class CarImageActions
     {
-        private readonly ICarImageRepository _repository;
+        protected CarImageActions() { }
 
-        public CarImageActions(ICarImageRepository repository)
+        protected List<CarImageResponseDto> GetImagesByCarActionExecution(int carId)
         {
-            _repository = repository;
+            var data = new List<CarImageResponseDto>();
+            List<CarImage> images;
+
+            using (var db = new AppDbContext())
+            {
+                images = db.CarImages
+                    .Where(img => img.CarId == carId)
+                    .ToList();
+            }
+
+            if (images.Count <= 0) return data;
+
+            foreach (var item in images)
+            {
+                data.Add(new CarImageResponseDto
+                {
+                    Id = item.Id,
+                    Url = item.Url,
+                    IsCover = item.IsCover,
+                    CarId = item.CarId
+                });
+            }
+
+            return data;
         }
 
-        public async Task<List<CarImageResponseDto>> GetImagesByCarAction(int carId)
-        {
-            var entities = await _repository.GetByCarIdAsync(carId);
-            return entities.Select(e => MapToDto(e)).ToList();
-        }
-
-        public async Task<ActionResponse> AddImageAction(CarImageCreateDto data)
+        protected ActionResponse AddImageActionExecution(CarImageCreateDto data)
         {
             if (string.IsNullOrWhiteSpace(data.Url))
             {
@@ -32,14 +48,18 @@ namespace CarWebSite.BusinessLayer.Core
                 };
             }
 
-            var entity = new CarImage
+            using (var db = new AppDbContext())
             {
-                Url = data.Url,
-                IsCover = data.IsCover,
-                CarId = data.CarId
-            };
+                var entity = new CarImage
+                {
+                    Url = data.Url,
+                    IsCover = data.IsCover,
+                    CarId = data.CarId
+                };
 
-            await _repository.AddAsync(entity);
+                db.CarImages.Add(entity);
+                db.SaveChanges();
+            }
 
             return new ActionResponse
             {
@@ -48,36 +68,29 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
-        public async Task<ActionResponse> DeleteImageAction(int id)
+        protected ActionResponse DeleteImageActionExecution(int id)
         {
-            var entity = await _repository.GetByIdAsync(id);
-
-            if (entity == null)
+            using (var db = new AppDbContext())
             {
-                return new ActionResponse
-                {
-                    IsSuccess = false,
-                    Message = "Image not found."
-                };
-            }
+                var entity = db.CarImages.FirstOrDefault(img => img.Id == id);
 
-            await _repository.DeleteAsync(id);
+                if (entity == null)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Image not found."
+                    };
+                }
+
+                db.CarImages.Remove(entity);
+                db.SaveChanges();
+            }
 
             return new ActionResponse
             {
                 IsSuccess = true,
                 Message = "Image deleted successfully."
-            };
-        }
-
-        private CarImageResponseDto MapToDto(CarImage entity)
-        {
-            return new CarImageResponseDto
-            {
-                Id = entity.Id,
-                Url = entity.Url,
-                IsCover = entity.IsCover,
-                CarId = entity.CarId
             };
         }
     }

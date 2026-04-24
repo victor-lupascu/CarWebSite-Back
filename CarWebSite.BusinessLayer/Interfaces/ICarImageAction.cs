@@ -5,8 +5,8 @@ namespace CarWebSite.BusinessLayer.Interfaces
 {
     public interface ICarImageAction
     {
-        Task<List<CarImageResponseDto>> GetImagesByCarAction(int carId);
-        Task<ActionResponse> AddImageAction(CarImageCreateDto data);
-        Task<ActionResponse> DeleteImageAction(int id);
+        List<CarImageResponseDto> GetImagesByCarAction(int carId);
+        ActionResponse AddImageAction(CarImageCreateDto data);
+        ActionResponse DeleteImageAction(int id);
     }
 }

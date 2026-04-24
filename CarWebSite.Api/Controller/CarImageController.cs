@@ -1,3 +1,4 @@
+using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.CarImage;
 using Microsoft.AspNetCore.Mvc;
@@ -8,31 +9,32 @@ namespace CarWebSite.Api.Controller
     [Route("api/[controller]")]
     public class CarImageController : ControllerBase
     {
-        private readonly ICarImageAction _carImageAction;
+        private ICarImageAction _carImageAction;
 
-        public CarImageController(ICarImageAction carImageAction)
+        public CarImageController()
         {
-            _carImageAction = carImageAction;
+            var bl = new BusinessLogic();
+            _carImageAction = bl.CarImageAction();
         }
 
         [HttpGet("{carId}")]
-        public async Task<IActionResult> GetByCarId(int carId)
+        public IActionResult GetByCarId(int carId)
         {
-            var images = await _carImageAction.GetImagesByCarAction(carId);
+            var images = _carImageAction.GetImagesByCarAction(carId);
             return Ok(images);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CarImageCreateDto data)
+        public IActionResult Add([FromBody] CarImageCreateDto data)
         {
-            var response = await _carImageAction.AddImageAction(data);
+            var response = _carImageAction.AddImageAction(data);
             return Ok(response);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            var response = await _carImageAction.DeleteImageAction(id);
+            var response = _carImageAction.DeleteImageAction(id);
             return Ok(response);
         }
     }
