@@ -1,4 +1,4 @@
-﻿using CarWebSite.BusinessLayer.Interfaces;
+using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.BusinessLayer.Structure;
 
 namespace CarWebSite.BusinessLayer
@@ -21,7 +21,7 @@ namespace CarWebSite.BusinessLayer
         {
             return new CarImageExecution();
         }
-        
+
         public ICarAction CarAction()
         {
             return new CarExecution();
@@ -32,5 +32,9 @@ namespace CarWebSite.BusinessLayer
             return new AnnouncementExecution();
         }
 
+        public IContactMessageAction ContactMessageAction()
+        {
+            return new ContactMessageExecution();
+        }
     }
 }

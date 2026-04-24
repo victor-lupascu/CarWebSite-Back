@@ -1,3 +1,4 @@
+using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.Contact;
 using Microsoft.AspNetCore.Mvc;
@@ -8,17 +9,18 @@ namespace CarWebSite.Api.Controller
     [Route("api/[controller]")]
     public class ContactMessageController : ControllerBase
     {
-        private readonly IContactMessageAction _contactAction;
+        private IContactMessageAction _contactAction;
 
-        public ContactMessageController(IContactMessageAction contactAction)
+        public ContactMessageController()
         {
-            _contactAction = contactAction;
+            var bl = new BusinessLogic();
+            _contactAction = bl.ContactMessageAction();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Send([FromBody] ContactMessageCreateDto data)
+        public IActionResult Send([FromBody] ContactMessageCreateDto data)
         {
-            var response = await _contactAction.SendMessageAction(data);
+            var response = _contactAction.SendMessageAction(data);
             return Ok(response);
         }
     }
