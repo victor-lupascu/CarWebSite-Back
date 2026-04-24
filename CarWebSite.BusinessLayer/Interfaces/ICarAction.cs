@@ -4,7 +4,7 @@ namespace CarWebSite.BusinessLayer.Interfaces
 {
     public interface ICarAction
     {
-        Task<List<CarResponseDto>> GetAllCarsAction();
-        Task<CarResponseDto?> GetCarByIdAction(int id);
+        List<CarResponseDto> GetAllCarsAction();
+        CarResponseDto? GetCarByIdAction(int id);
     }
 }

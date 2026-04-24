@@ -16,5 +16,10 @@ namespace CarWebSite.BusinessLayer
         {
             return new FavoriteExecution();
         }
+
+        public ICarAction CarAction()
+        {
+            return new CarExecution();
+        }
     }
 }

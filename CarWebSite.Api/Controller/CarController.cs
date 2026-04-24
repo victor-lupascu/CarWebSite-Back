@@ -1,3 +1,4 @@
+using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,24 +8,25 @@ namespace CarWebSite.Api.Controller
     [Route("api/[controller]")]
     public class CarController : ControllerBase
     {
-        private readonly ICarAction _carAction;
+        private ICarAction _carAction;
 
-        public CarController(ICarAction carAction)
+        public CarController()
         {
-            _carAction = carAction;
+            var bl = new BusinessLogic();
+            _carAction = bl.CarAction();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("getAll")]
+        public IActionResult GetAll()
         {
-            var cars = await _carAction.GetAllCarsAction();
+            var cars = _carAction.GetAllCarsAction();
             return Ok(cars);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet]
+        public IActionResult GetById(int id)
         {
-            var car = await _carAction.GetCarByIdAction(id);
+            var car = _carAction.GetCarByIdAction(id);
             return car == null ? NotFound() : Ok(car);
         }
     }
