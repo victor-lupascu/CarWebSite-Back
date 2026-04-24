@@ -1,35 +1,47 @@
-﻿using CarWebSite.BusinessLayer.Interfaces;
+﻿using CarWebSite.BusinessLayer;
+using CarWebSite.BusinessLayer.Interfaces;
+using CarWebSite.Domain.Models.Announcement;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWebSite.Api.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class  FavoriteController : ControllerBase
+    public class AnnouncementController : ControllerBase
     {
-        private readonly IFavoriteAction _favoriteAction;
+        private IAnnouncementAction _announcementAction;
 
-        public FavoriteController(IFavoriteAction favoriteAction)
+        public AnnouncementController()
         {
-            _favoriteAction = favoriteAction;
+            var bl = new BusinessLogic();
+            _announcementAction = bl.AnnouncementAction();
         }
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUserFavorites(int userId)
+        [HttpGet("getAll")]
+        public IActionResult GetAll()
         {
-            var result = await _favoriteAction.GetUserFavoritesAction(userId);
-            return Ok(result);
+            var announcements = _announcementAction.GetAllAnnouncementAction();
+            return Ok(announcements);
         }
 
-        [HttpPost("{carId}/{userId}")]
-        public async Task<IActionResult> AddFavorite(int carId, int userId)
-        { var response = await _favoriteAction.AddFavoriteAction(carId, userId);
-        return Ok(response);
+        [HttpGet]
+        public IActionResult GetById(int id)
+        {
+            var announcement = _announcementAction.GetAnnouncementByIdAction(id);
+            return announcement == null ? NotFound() : Ok(announcement);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveFavorite(int id)
-        { var response = await _favoriteAction.RemoveFavoriteAction(id);
+        [HttpPost]
+        public IActionResult Create([FromBody] AnnouncementCreateDto data)
+        {
+            var response = _announcementAction.CreateAnnouncementAction(data);
+            return Ok(response);
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            var response = _announcementAction.DeleteAnnouncementAction(id);
             return Ok(response);
         }
     }
