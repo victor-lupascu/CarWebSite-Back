@@ -4,19 +4,13 @@ using Microsoft.EntityFrameworkCore;
 namespace CarWebSite.DataAccess.Context
 {
     public class AppDbContext : DbContext
-    {   //DI
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
+    {   
         //Core
         public AppDbContext() { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //Falls back to DbSession only when DI is not providing the configuration
-            if(!optionsBuilder.IsConfigured)
-            {
                 optionsBuilder.UseSqlServer(DbSession.ConnectionString);
-            }
         }
 
         //Entities
