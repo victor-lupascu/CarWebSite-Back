@@ -9,7 +9,7 @@ namespace CarWebSite.Api.Controller
     [Route("api/[controller]")]
     public class AnnouncementController : ControllerBase
     {
-        private IAnnouncementAction _announcementAction;
+        private readonly IAnnouncementAction _announcementAction;
 
         public AnnouncementController()
         {
