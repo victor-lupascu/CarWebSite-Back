@@ -8,7 +8,7 @@ namespace CarWebSite.Api.Controller
     [Route("api/[controller]")]
     public class CarController : ControllerBase
     {
-        private ICarAction _carAction;
+        private readonly ICarAction _carAction;
 
         public CarController()
         {

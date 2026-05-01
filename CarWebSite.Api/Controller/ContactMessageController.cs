@@ -9,7 +9,7 @@ namespace CarWebSite.Api.Controller
     [Route("api/[controller]")]
     public class ContactMessageController : ControllerBase
     {
-        private IContactMessageAction _contactAction;
+        private readonly IContactMessageAction _contactAction;
 
         public ContactMessageController()
         {

@@ -9,7 +9,7 @@ namespace CarWebSite.Api.Controller
     [Route("api/[controller]")]
     public class BrandController : ControllerBase
     {
-        private IBrandAction _brandAction;
+        private readonly IBrandAction _brandAction;
 
         public BrandController()
         {

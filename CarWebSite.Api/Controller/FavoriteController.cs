@@ -8,7 +8,7 @@ namespace CarWebSite.Api.Controller
     [Route("api/[controller]")]
     public class FavoriteController : ControllerBase
     {
-        private IFavoriteAction _favoriteAction;
+        private readonly IFavoriteAction _favoriteAction;
 
         public FavoriteController()
         {
