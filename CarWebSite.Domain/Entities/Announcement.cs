@@ -26,10 +26,16 @@ namespace CarWebSite.Domain.Entities
 
         public DateTime PublishedAt { get; set; } 
 
+
         public int UserDataId { get; set; }
+
+        [ForeignKey(nameof(UserDataId))]
         public UserData UserData { get; set; } = null!;
 
+
         public int CarId { get; set; }
+
+        [ForeignKey(nameof(CarId))]
         public Car Car { get; set; } = null!;
     }
 }

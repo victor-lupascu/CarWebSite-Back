@@ -15,6 +15,8 @@ namespace CarWebSite.Domain.Entities
         public bool IsCover { get; set; } = false;
 
         public int CarId { get; set; }
+
+        [ForeignKey(nameof(CarId))]
         public Car Car { get; set; } = null!;
     }
 }
