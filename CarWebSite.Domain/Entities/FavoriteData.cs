@@ -9,12 +9,16 @@ namespace CarWebSite.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required]
+        
         public int UserDataId { get; set; }
+
+        [ForeignKey(nameof(UserDataId))]
         public UserData UserData { get; set; } = null!;
 
-        [Required]
+        
         public int CarId { get; set; }
+
+        [ForeignKey(nameof(CarId))]
         public Car Car { get; set; } = null!;
 
         [DataType(DataType.Date)]

@@ -49,6 +49,6 @@ namespace CarWebSite.Domain.Entities
         public Brand Brand { get; set; } = null!;
 
         public ICollection<CarImage> Images { get; set; } = new List<CarImage>();
-        public ICollection<Announcement> Announcements { get; set; } = new List<Announcement>();
+        public Announcement? Announcement { get; set; }
     }
 }

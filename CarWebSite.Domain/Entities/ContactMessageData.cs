@@ -11,11 +11,11 @@ namespace CarWebSite.Domain.Entities
         public int Id { get; set; }
 
         [Required]
-        [StringLength(40)]
+        [StringLength(70)]
         public string Name { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(80)]
+        [StringLength(200)]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; } = string.Empty;
 
