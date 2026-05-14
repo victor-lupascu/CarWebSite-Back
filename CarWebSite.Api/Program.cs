@@ -1,11 +1,36 @@
 using CarWebSite.DataAccess;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DbSession - connection string accessible for direct Core DB access
+// DbSession 
 DbSession.ConnectionString = builder.Configuration
     .GetConnectionString("DefaultConnection")!;
+
+// JWT Authentication configuration
+var jwtKey = builder.Configuration["Jwt:Key"]!;
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
+var jwtAudience = builder.Configuration["Jwt:Audience"]!;
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 // CORS
 builder.Services.AddCors(options =>
@@ -31,5 +56,10 @@ app.UseCors("AllowFrontend");
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
+
+// JWT middleware 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 app.Run();
