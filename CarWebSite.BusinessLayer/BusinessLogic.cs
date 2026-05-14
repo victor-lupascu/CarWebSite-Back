@@ -36,5 +36,10 @@ namespace CarWebSite.BusinessLayer
         {
             return new ContactMessageExecution();
         }
+
+        public IUserAction UserAction()
+        {
+            return new UserExecution();
+        }
     }
 }
