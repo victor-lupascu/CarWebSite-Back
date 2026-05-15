@@ -1,12 +1,14 @@
 using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.Brand;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWebSite.Api.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class BrandController : ControllerBase
     {
         private readonly IBrandAction _brandAction;
@@ -18,6 +20,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpGet("getAll")]
+        [AllowAnonymous]
         public IActionResult GetAll()
         {
             var brands = _brandAction.GetAllBrandsAction();
@@ -25,6 +28,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             var brand = _brandAction.GetBrandByIdAction(id);
@@ -32,6 +36,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult Create([FromBody] BrandCreateDto data)
         {
             var response = _brandAction.CreateBrandAction(data);
@@ -39,11 +44,11 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             var response = _brandAction.DeleteBrandAction(id);
             return Ok(response);
         }
-
     }
 }
