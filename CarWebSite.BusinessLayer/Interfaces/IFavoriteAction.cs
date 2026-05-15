@@ -8,6 +8,7 @@ namespace CarWebSite.BusinessLayer.Interfaces
         List<FavoriteResponseDto> GetUserFavoritesAction(int userId);
         ActionResponse AddFavoriteAction(int carId, int userId);
         ActionResponse RemoveFavoriteAction(int id);
+        int? GetFavoriteOwnerAction(int id);
     }
 }
 

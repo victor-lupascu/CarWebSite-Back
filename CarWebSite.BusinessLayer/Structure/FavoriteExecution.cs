@@ -21,5 +21,10 @@ namespace CarWebSite.BusinessLayer.Structure
         {
             return RemoveFavoriteActionExecution(id);
         }
+
+        public int? GetFavoriteOwnerAction(int id)
+        {
+            return GetFavoriteOwnerActionExecution(id);
+        }
     }
 }

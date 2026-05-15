@@ -108,11 +108,21 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
+        protected int? GetFavoriteOwnerActionExecution(int id)
+        {
+            using (var db = new AppDbContext())
+            {
+                var entity = db.Favorites.FirstOrDefault(f => f.Id == id);
+                return entity?.UserDataId;
+            }
+        }
+
         private FavoriteResponseDto MapToDto(FavoriteData entity)
         {
             return new FavoriteResponseDto
             {
                 Id = entity.Id,
+                UserId = entity.UserDataId,
                 CarId = entity.CarId,
                 CreatedAt = entity.CreatedAt,
                 Car = entity.Car != null ? new CarResponseDto

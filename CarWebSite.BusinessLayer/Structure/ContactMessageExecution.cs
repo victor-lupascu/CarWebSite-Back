@@ -11,5 +11,10 @@ namespace CarWebSite.BusinessLayer.Structure
         {
             return SendMessageActionExecution(data);
         }
+
+        public List<ContactMessageResponseDto> GetAllMessagesAction()
+        {
+            return GetAllMessagesActionExecution();
+        }
     }
 }
