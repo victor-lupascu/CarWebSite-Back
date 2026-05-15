@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CarWebSite.BusinessLayer.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,14 @@ DbSession.ConnectionString = builder.Configuration
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
 var jwtAudience = builder.Configuration["Jwt:Audience"]!;
+
+//JWTSession - direct Auth access
+JwtSession.Issuer = jwtIssuer;
+JwtSession.Audience = jwtAudience;
+JwtSession.SecretKey = jwtKey;
+JwtSession.AccessTokenMinutes = int.Parse(
+    builder.Configuration["Jwt:AccessTokenMinutes"]!);
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
