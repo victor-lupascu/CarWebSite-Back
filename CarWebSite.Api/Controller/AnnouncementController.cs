@@ -1,12 +1,15 @@
-﻿using CarWebSite.BusinessLayer;
+using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.Announcement;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CarWebSite.Api.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AnnouncementController : ControllerBase
     {
         private readonly IAnnouncementAction _announcementAction;
@@ -18,6 +21,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpGet("getAll")]
+        [AllowAnonymous]
         public IActionResult GetAll()
         {
             var announcements = _announcementAction.GetAllAnnouncementAction();
@@ -25,6 +29,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             var announcement = _announcementAction.GetAnnouncementByIdAction(id);
@@ -34,6 +39,8 @@ namespace CarWebSite.Api.Controller
         [HttpPost]
         public IActionResult Create([FromBody] AnnouncementCreateDto data)
         {
+            var (userId, _) = GetCurrentUser();
+            data.UserId = userId;
             var response = _announcementAction.CreateAnnouncementAction(data);
             return Ok(response);
         }
@@ -41,8 +48,22 @@ namespace CarWebSite.Api.Controller
         [HttpDelete]
         public IActionResult Delete(int id)
         {
+            var announcement = _announcementAction.GetAnnouncementByIdAction(id);
+            if (announcement == null) return NotFound();
+
+            var (userId, role) = GetCurrentUser();
+            if (announcement.UserId != userId && role != "Admin")
+                return Forbid();
+
             var response = _announcementAction.DeleteAnnouncementAction(id);
             return Ok(response);
+        }
+
+        private (int userId, string role) GetCurrentUser()
+        {
+            var id = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var role = User.FindFirst(ClaimTypes.Role)!.Value;
+            return (id, role);
         }
     }
 }

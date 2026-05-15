@@ -8,5 +8,7 @@ namespace CarWebSite.BusinessLayer.Interfaces
         List<CarImageResponseDto> GetImagesByCarAction(int carId);
         ActionResponse AddImageAction(CarImageCreateDto data);
         ActionResponse DeleteImageAction(int id);
+        int? GetCarOwnerAction(int carId);
+        int? GetImageOwnerAction(int imageId);
     }
 }

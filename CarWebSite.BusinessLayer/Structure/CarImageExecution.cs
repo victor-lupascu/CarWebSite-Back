@@ -21,5 +21,15 @@ namespace CarWebSite.BusinessLayer.Structure
         {
             return DeleteImageActionExecution(id);
         }
+
+        public int? GetCarOwnerAction(int carId)
+        {
+            return GetCarOwnerActionExecution(carId);
+        }
+
+        public int? GetImageOwnerAction(int imageId)
+        {
+            return GetImageOwnerActionExecution(imageId);
+        }
     }
 }

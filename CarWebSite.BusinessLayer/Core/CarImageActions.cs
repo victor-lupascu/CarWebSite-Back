@@ -2,6 +2,7 @@ using CarWebSite.DataAccess.Context;
 using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Models.CarImage;
 using CarWebSite.Domain.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarWebSite.BusinessLayer.Core
 {
@@ -92,6 +93,27 @@ namespace CarWebSite.BusinessLayer.Core
                 IsSuccess = true,
                 Message = "Image deleted successfully."
             };
+        }
+
+        protected int? GetCarOwnerActionExecution(int carId)
+        {
+            using (var db = new AppDbContext())
+            {
+                var announcement = db.Announcements.FirstOrDefault(a => a.CarId == carId);
+                return announcement?.UserDataId;
+            }
+        }
+
+        protected int? GetImageOwnerActionExecution(int imageId)
+        {
+            using (var db = new AppDbContext())
+            {
+                var image = db.CarImages
+                    .Include(img => img.Car)
+                        .ThenInclude(c => c.Announcement)
+                    .FirstOrDefault(img => img.Id == imageId);
+                return image?.Car?.Announcement?.UserDataId;
+            }
         }
     }
 }

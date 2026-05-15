@@ -6,5 +6,6 @@ namespace CarWebSite.BusinessLayer.Interfaces
     public interface IContactMessageAction
     {
         ActionResponse SendMessageAction(ContactMessageCreateDto data);
+        List<ContactMessageResponseDto> GetAllMessagesAction();
     }
 }
