@@ -7,6 +7,7 @@ namespace CarWebSite.Domain.Models.Announcement
     {
         // Announcement fields
         public string Title { get; set; } = string.Empty;
+        public int UserId { get; set; }
         public bool Negotiable { get; set; } = false;
         public bool ShowPhone { get; set; } = true;
 

@@ -96,6 +96,7 @@ namespace CarWebSite.BusinessLayer.Core
                     Negotiable = data.Negotiable,
                     ShowPhone = data.ShowPhone,
                     PublishedAt = DateTime.UtcNow,
+                    UserDataId = data.UserId,
                     Car = car
                 };
 
