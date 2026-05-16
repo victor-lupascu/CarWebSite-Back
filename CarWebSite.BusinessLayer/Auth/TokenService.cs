@@ -6,11 +6,9 @@ using System.Text;
 
 namespace CarWebSite.BusinessLayer.Auth
 {
-    public class TokenService
+    public static class TokenService
     {
-        public TokenService() { }
-
-        public string GenerateAccessToken(int userId, string fullName, string role)
+        public static string GenerateAccessToken(int userId, string fullName, string role)
         {
             // Build Symetric signing key from secret
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSession.SecretKey));
@@ -42,7 +40,7 @@ namespace CarWebSite.BusinessLayer.Auth
 
         }
 
-        public string GenerateRefreshToken()
+        public static string GenerateRefreshToken()
         {
             // Random bytes ensure refresh tokens
             var bytes = new byte[64];
