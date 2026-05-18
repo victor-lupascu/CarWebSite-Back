@@ -27,6 +27,34 @@ namespace CarWebSite.DataAccess.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Brand>().HasData(
+                new Brand { Id = 1,  Name = "Audi" },
+                new Brand { Id = 2,  Name = "BMW" },
+                new Brand { Id = 3,  Name = "Chevrolet" },
+                new Brand { Id = 4,  Name = "Dacia" },
+                new Brand { Id = 5,  Name = "Ferrari" },
+                new Brand { Id = 6,  Name = "Ford" },
+                new Brand { Id = 7,  Name = "Honda" },
+                new Brand { Id = 8,  Name = "Hyundai" },
+                new Brand { Id = 9,  Name = "Kia" },
+                new Brand { Id = 10, Name = "Lamborghini" },
+                new Brand { Id = 11, Name = "Land Rover" },
+                new Brand { Id = 12, Name = "Mazda" },
+                new Brand { Id = 13, Name = "Mercedes-Benz" },
+                new Brand { Id = 14, Name = "Nissan" },
+                new Brand { Id = 15, Name = "Opel" },
+                new Brand { Id = 16, Name = "Peugeot" },
+                new Brand { Id = 17, Name = "Porsche" },
+                new Brand { Id = 18, Name = "Renault" },
+                new Brand { Id = 19, Name = "Seat" },
+                new Brand { Id = 20, Name = "Skoda" },
+                new Brand { Id = 21, Name = "Subaru" },
+                new Brand { Id = 22, Name = "Tesla" },
+                new Brand { Id = 23, Name = "Toyota" },
+                new Brand { Id = 24, Name = "Volkswagen" },
+                new Brand { Id = 25, Name = "Volvo" }
+            );
+
             // Car-Announcement: 1:1 
             // Announcement is the dependent entity (holds the FK).
             // Deleting a Car cascades the deletion to its Announcement.
