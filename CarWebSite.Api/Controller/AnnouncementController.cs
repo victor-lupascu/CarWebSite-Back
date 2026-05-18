@@ -41,8 +41,15 @@ namespace CarWebSite.Api.Controller
         {
             var (userId, _) = GetCurrentUser();
             data.UserId = userId;
-            var response = _announcementAction.CreateAnnouncementAction(data);
-            return Ok(response);
+            try
+            {
+                var response = _announcementAction.CreateAnnouncementAction(data);
+                return Ok(response);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]

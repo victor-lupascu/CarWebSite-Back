@@ -3,6 +3,7 @@ using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.Announcement;
 using CarWebSite.Domain.Models.Responses;
 
+
 namespace CarWebSite.BusinessLayer.Structure
 {
     public class AnnouncementExecution : AnnouncementActions, IAnnouncementAction
@@ -17,7 +18,7 @@ namespace CarWebSite.BusinessLayer.Structure
             return GetAnnouncementByIdActionExecution(id);
         }
 
-        public ActionResponse CreateAnnouncementAction(AnnouncementCreateDto data)
+        public AnnouncementResponseDto CreateAnnouncementAction(AnnouncementCreateDto data)
         {
             return CreateAnnouncementActionExecution(data);
         }
