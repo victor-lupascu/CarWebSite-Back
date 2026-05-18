@@ -83,7 +83,12 @@ namespace CarWebSite.BusinessLayer.Core
                     EngineSize = data.EngineSize,
                     Horsepower = data.Horsepower,
                     VIN = data.VIN,
-                    BrandId = data.BrandId
+                    BrandId = data.BrandId,
+                    Images = data.Images.Select(img => new CarImage
+                    {
+                        Url = img.Url,
+                        IsCover = img.IsCover
+                    }).ToList()
                 };
 
                 var announcement = new Announcement
