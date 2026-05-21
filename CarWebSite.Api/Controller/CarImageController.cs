@@ -1,6 +1,7 @@
 using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.CarImage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWebSite.Api.Controller
@@ -18,6 +19,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpGet("{carId}")]
+        [AllowAnonymous]
         public IActionResult GetByCarId(int carId)
         {
             var images = _carImageAction.GetImagesByCarAction(carId);

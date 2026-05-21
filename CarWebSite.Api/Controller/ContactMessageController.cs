@@ -1,6 +1,7 @@
 using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.Contact;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWebSite.Api.Controller
@@ -18,6 +19,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult Send([FromBody] ContactMessageCreateDto data)
         {
             var response = _contactAction.SendMessageAction(data);

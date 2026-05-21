@@ -1,5 +1,6 @@
 using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWebSite.Api.Controller
@@ -16,6 +17,7 @@ namespace CarWebSite.Api.Controller
             _favoriteAction = bl.FavoriteAction();
         }
 
+        [Authorize]
         [HttpGet("{userId}")]
         public IActionResult GetByUser(int userId)
         {
@@ -23,6 +25,7 @@ namespace CarWebSite.Api.Controller
             return Ok(favorites);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Add([FromQuery] int carId, [FromQuery] int userId)
         {
@@ -30,6 +33,7 @@ namespace CarWebSite.Api.Controller
             return Ok(response);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult Remove(int id)
         {

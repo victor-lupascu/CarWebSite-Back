@@ -1,5 +1,6 @@
 using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWebSite.Api.Controller
@@ -17,6 +18,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpGet("getAll")]
+        [AllowAnonymous]
         public IActionResult GetAll()
         {
             var cars = _carAction.GetAllCarsAction();
@@ -24,6 +26,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             var car = _carAction.GetCarByIdAction(id);

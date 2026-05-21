@@ -2,6 +2,7 @@
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.User;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace CarWebSite.Api.Controller
@@ -20,6 +21,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public IActionResult Register([FromBody] UserRegisterDto dto)
         {
             var response = _userAction.Register(dto);
@@ -27,6 +29,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpPost("auth")]
+        [AllowAnonymous]
         public IActionResult Login([FromBody] UserLoginDto dto)
         {
             var response = _userAction.Login(dto);
@@ -34,6 +37,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpPost("refresh")]
+        [AllowAnonymous]
         public IActionResult Refresh([FromBody] RefreshTokenRequestDto dto)
         {
             var response = _userAction.Refresh(dto.RefreshToken);
@@ -46,6 +50,5 @@ namespace CarWebSite.Api.Controller
             var response = _userAction.Logout(dto.RefreshToken);
             return Ok(response);
         }
-
     }
 }

@@ -2,6 +2,7 @@
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.Announcement;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarWebSite.Api.Controller
 {
@@ -18,6 +19,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpGet("getAll")]
+        [AllowAnonymous]
         public IActionResult GetAll()
         {
             var announcements = _announcementAction.GetAllAnnouncementAction();
@@ -25,6 +27,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             var announcement = _announcementAction.GetAnnouncementByIdAction(id);
