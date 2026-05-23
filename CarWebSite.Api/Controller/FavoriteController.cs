@@ -2,6 +2,7 @@ using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CarWebSite.Api.Controller
 {
@@ -18,17 +19,19 @@ namespace CarWebSite.Api.Controller
         }
 
         [Authorize]
-        [HttpGet("{userId}")]
-        public IActionResult GetByUser(int userId)
+        [HttpGet]
+        public IActionResult GetMyFavorites()
         {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var favorites = _favoriteAction.GetUserFavoritesAction(userId);
             return Ok(favorites);
         }
 
         [Authorize]
         [HttpPost]
-        public IActionResult Add([FromQuery] int carId, [FromQuery] int userId)
+        public IActionResult Add([FromQuery] int carId)
         {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var response = _favoriteAction.AddFavoriteAction(carId, userId);
             return Ok(response);
         }
@@ -37,7 +40,8 @@ namespace CarWebSite.Api.Controller
         [HttpDelete("{id}")]
         public IActionResult Remove(int id)
         {
-            var response = _favoriteAction.RemoveFavoriteAction(id);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var response = _favoriteAction.RemoveFavoriteAction(id, userId);
             return Ok(response);
         }
     }

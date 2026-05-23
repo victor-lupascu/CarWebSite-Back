@@ -82,7 +82,7 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
-        protected ActionResponse RemoveFavoriteActionExecution(int id)
+        protected ActionResponse RemoveFavoriteActionExecution(int id, int userId)
         {
             using (var db = new AppDbContext())
             {
@@ -94,6 +94,16 @@ namespace CarWebSite.BusinessLayer.Core
                     {
                         IsSuccess = false,
                         Message = "Favorite not found."
+                    };
+                }
+
+                // Owner check
+                if(entity.UserDataId != userId)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Invalid operation"
                     };
                 }
 
