@@ -7,8 +7,8 @@ namespace CarWebSite.BusinessLayer.Interfaces
     {
         List<AnnouncementResponseDto> GetAllAnnouncementAction();
         AnnouncementResponseDto? GetAnnouncementByIdAction(int id);
-        ActionResponse CreateAnnouncementAction(AnnouncementCreateDto data);
+        ActionResponse CreateAnnouncementAction(AnnouncementCreateDto data, int userId);
         ActionResponse UpdateAnnouncementAction(AnnouncementUpdateDto data);
-        ActionResponse DeleteAnnouncementAction(int id);
+        ActionResponse DeleteAnnouncementAction(int id, int userId, bool isAdmin);
     }
 }

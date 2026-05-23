@@ -17,9 +17,9 @@ namespace CarWebSite.BusinessLayer.Structure
             return GetAnnouncementByIdActionExecution(id);
         }
 
-        public ActionResponse CreateAnnouncementAction(AnnouncementCreateDto data)
+        public ActionResponse CreateAnnouncementAction(AnnouncementCreateDto data, int userId)
         {
-            return CreateAnnouncementActionExecution(data);
+            return CreateAnnouncementActionExecution(data, userId);
         }
 
         public ActionResponse UpdateAnnouncementAction(AnnouncementUpdateDto data)
@@ -27,9 +27,9 @@ namespace CarWebSite.BusinessLayer.Structure
             return UpdateAnnouncementActionExecution(data);
         }
 
-        public ActionResponse DeleteAnnouncementAction(int id)
+        public ActionResponse DeleteAnnouncementAction(int id, int userId, bool isAdmin)
         {
-            return DeleteAnnouncementActionExecution(id);
+            return DeleteAnnouncementActionExecution(id, userId, isAdmin);
         }
     }
 }
