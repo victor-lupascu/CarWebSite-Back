@@ -3,6 +3,7 @@ using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.CarImage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CarWebSite.Api.Controller
 {
@@ -29,14 +30,17 @@ namespace CarWebSite.Api.Controller
         [HttpPost]
         public IActionResult Add([FromBody] CarImageCreateDto data)
         {
-            var response = _carImageAction.AddImageAction(data);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var response = _carImageAction.AddImageAction(data, userId);
             return Ok(response);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var response = _carImageAction.DeleteImageAction(id);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var isAdmin = User.IsInRole("Admin");
+            var response = _carImageAction.DeleteImageAction(id, userId, isAdmin);
             return Ok(response);
         }
     }

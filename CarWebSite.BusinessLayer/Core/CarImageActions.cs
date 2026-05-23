@@ -37,7 +37,7 @@ namespace CarWebSite.BusinessLayer.Core
             return data;
         }
 
-        protected ActionResponse AddImageActionExecution(CarImageCreateDto data)
+        protected ActionResponse AddImageActionExecution(CarImageCreateDto data, int userId)
         {
             if (string.IsNullOrWhiteSpace(data.Url))
             {
@@ -50,6 +50,26 @@ namespace CarWebSite.BusinessLayer.Core
 
             using (var db = new AppDbContext())
             {
+                var announcement = db.Announcements.FirstOrDefault(a => a.CarId == data.CarId);
+                if (announcement == null)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Announceement not found for this car."
+                    };
+                }
+
+                // Owner check
+                if(announcement.UserDataId  != userId)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Operation failed"
+                    };
+                }
+
                 var entity = new CarImage
                 {
                     Url = data.Url,
@@ -68,7 +88,7 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
-        protected ActionResponse DeleteImageActionExecution(int id)
+        protected ActionResponse DeleteImageActionExecution(int id, int userId, bool isAdmin)
         {
             using (var db = new AppDbContext())
             {
@@ -81,6 +101,21 @@ namespace CarWebSite.BusinessLayer.Core
                         IsSuccess = false,
                         Message = "Image not found."
                     };
+                }
+
+                // Owner check
+                if(!isAdmin)
+                {
+                    var announcement = db.Announcements.FirstOrDefault(a => a.CarId == entity.CarId);
+                    if(announcement == null || announcement.CarId != userId)
+                    {
+                        return new ActionResponse
+                        {
+                            IsSuccess = false,
+                            Message = "Operation failed"
+                        };
+                    }
+
                 }
 
                 db.CarImages.Remove(entity);
