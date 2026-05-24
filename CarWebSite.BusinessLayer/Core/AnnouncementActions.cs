@@ -57,7 +57,7 @@ namespace CarWebSite.BusinessLayer.Core
             return MapToDto(entity);
         }
 
-        protected ActionResponse CreateAnnouncementActionExecution(AnnouncementCreateDto data)
+        protected ActionResponse CreateAnnouncementActionExecution(AnnouncementCreateDto data, int userId)
         {
             if (string.IsNullOrWhiteSpace(data.Title))
             {
@@ -96,7 +96,7 @@ namespace CarWebSite.BusinessLayer.Core
                     Negotiable = data.Negotiable,
                     ShowPhone = data.ShowPhone,
                     PublishedAt = DateTime.UtcNow,
-                    UserDataId = data.UserId,
+                    UserDataId = userId,
                     Car = car
                 };
 
@@ -120,7 +120,7 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
-        protected ActionResponse DeleteAnnouncementActionExecution(int id)
+        protected ActionResponse DeleteAnnouncementActionExecution(int id, int userId, bool isAdmin)
         {
             using (var db = new AppDbContext())
             {
@@ -132,6 +132,16 @@ namespace CarWebSite.BusinessLayer.Core
                     {
                         IsSuccess = false,
                         Message = "Announcement not found."
+                    };
+                }
+
+                // Owner check
+                if (entity.UserDataId != userId && !isAdmin)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Operation failed"
                     };
                 }
 

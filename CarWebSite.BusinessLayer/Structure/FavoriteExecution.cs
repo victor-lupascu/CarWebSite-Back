@@ -17,14 +17,9 @@ namespace CarWebSite.BusinessLayer.Structure
             return AddFavoriteActionExecution(carId, userId);
         }
 
-        public ActionResponse RemoveFavoriteAction(int id)
+        public ActionResponse RemoveFavoriteAction(int id, int userId)
         {
-            return RemoveFavoriteActionExecution(id);
-        }
-
-        public int? GetFavoriteOwnerAction(int id)
-        {
-            return GetFavoriteOwnerActionExecution(id);
+            return RemoveFavoriteActionExecution(id, userId);
         }
     }
 }

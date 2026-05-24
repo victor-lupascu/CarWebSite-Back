@@ -8,7 +8,6 @@ namespace CarWebSite.Api.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class FavoriteController : ControllerBase
     {
         private readonly IFavoriteAction _favoriteAction;
@@ -19,40 +18,31 @@ namespace CarWebSite.Api.Controller
             _favoriteAction = bl.FavoriteAction();
         }
 
+        [Authorize]
         [HttpGet]
-        public IActionResult GetByUser()
+        public IActionResult GetMyFavorites()
         {
-            var (userId, _) = GetCurrentUser();
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var favorites = _favoriteAction.GetUserFavoritesAction(userId);
             return Ok(favorites);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Add([FromQuery] int carId)
         {
-            var (userId, _) = GetCurrentUser();
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var response = _favoriteAction.AddFavoriteAction(carId, userId);
             return Ok(response);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult Remove(int id)
         {
-            var (userId, _) = GetCurrentUser();
-            var ownerId = _favoriteAction.GetFavoriteOwnerAction(id);
-            if (ownerId == null) return NotFound();
-            if (ownerId != userId)
-                return Forbid();
-
-            var response = _favoriteAction.RemoveFavoriteAction(id);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var response = _favoriteAction.RemoveFavoriteAction(id, userId);
             return Ok(response);
-        }
-
-        private (int userId, string role) GetCurrentUser()
-        {
-            var id = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            var role = User.FindFirst(ClaimTypes.Role)!.Value;
-            return (id, role);
         }
     }
 }

@@ -2,7 +2,6 @@ using CarWebSite.DataAccess.Context;
 using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Models.CarImage;
 using CarWebSite.Domain.Models.Responses;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarWebSite.BusinessLayer.Core
 {
@@ -38,7 +37,7 @@ namespace CarWebSite.BusinessLayer.Core
             return data;
         }
 
-        protected ActionResponse AddImageActionExecution(CarImageCreateDto data)
+        protected ActionResponse AddImageActionExecution(CarImageCreateDto data, int userId)
         {
             if (string.IsNullOrWhiteSpace(data.Url))
             {
@@ -51,6 +50,26 @@ namespace CarWebSite.BusinessLayer.Core
 
             using (var db = new AppDbContext())
             {
+                var announcement = db.Announcements.FirstOrDefault(a => a.CarId == data.CarId);
+                if (announcement == null)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Announceement not found for this car."
+                    };
+                }
+
+                // Owner check
+                if(announcement.UserDataId  != userId)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Operation failed"
+                    };
+                }
+
                 var entity = new CarImage
                 {
                     Url = data.Url,
@@ -69,7 +88,7 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
-        protected ActionResponse DeleteImageActionExecution(int id)
+        protected ActionResponse DeleteImageActionExecution(int id, int userId, bool isAdmin)
         {
             using (var db = new AppDbContext())
             {
@@ -84,6 +103,21 @@ namespace CarWebSite.BusinessLayer.Core
                     };
                 }
 
+                // Owner check
+                if(!isAdmin)
+                {
+                    var announcement = db.Announcements.FirstOrDefault(a => a.CarId == entity.CarId);
+                    if(announcement == null || announcement.CarId != userId)
+                    {
+                        return new ActionResponse
+                        {
+                            IsSuccess = false,
+                            Message = "Operation failed"
+                        };
+                    }
+
+                }
+
                 db.CarImages.Remove(entity);
                 db.SaveChanges();
             }
@@ -93,27 +127,6 @@ namespace CarWebSite.BusinessLayer.Core
                 IsSuccess = true,
                 Message = "Image deleted successfully."
             };
-        }
-
-        protected int? GetCarOwnerActionExecution(int carId)
-        {
-            using (var db = new AppDbContext())
-            {
-                var announcement = db.Announcements.FirstOrDefault(a => a.CarId == carId);
-                return announcement?.UserDataId;
-            }
-        }
-
-        protected int? GetImageOwnerActionExecution(int imageId)
-        {
-            using (var db = new AppDbContext())
-            {
-                var image = db.CarImages
-                    .Include(img => img.Car)
-                        .ThenInclude(c => c.Announcement)
-                    .FirstOrDefault(img => img.Id == imageId);
-                return image?.Car?.Announcement?.UserDataId;
-            }
         }
     }
 }

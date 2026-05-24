@@ -9,7 +9,6 @@ namespace CarWebSite.Api.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class CarImageController : ControllerBase
     {
         private readonly ICarImageAction _carImageAction;
@@ -31,34 +30,18 @@ namespace CarWebSite.Api.Controller
         [HttpPost]
         public IActionResult Add([FromBody] CarImageCreateDto data)
         {
-            var (userId, role) = GetCurrentUser();
-            var ownerId = _carImageAction.GetCarOwnerAction(data.CarId);
-            if (ownerId == null) return NotFound();
-            if (ownerId != userId && role != "Admin")
-                return Forbid();
-
-            var response = _carImageAction.AddImageAction(data);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var response = _carImageAction.AddImageAction(data, userId);
             return Ok(response);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var (userId, role) = GetCurrentUser();
-            var ownerId = _carImageAction.GetImageOwnerAction(id);
-            if (ownerId == null) return NotFound();
-            if (ownerId != userId && role != "Admin")
-                return Forbid();
-
-            var response = _carImageAction.DeleteImageAction(id);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var isAdmin = User.IsInRole("Admin");
+            var response = _carImageAction.DeleteImageAction(id, userId, isAdmin);
             return Ok(response);
-        }
-
-        private (int userId, string role) GetCurrentUser()
-        {
-            var id = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            var role = User.FindFirst(ClaimTypes.Role)!.Value;
-            return (id, role);
         }
     }
 }

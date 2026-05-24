@@ -2,7 +2,6 @@ using CarWebSite.DataAccess.Context;
 using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Models.Contact;
 using CarWebSite.Domain.Models.Responses;
-using System.Collections.Generic;
 
 namespace CarWebSite.BusinessLayer.Core
 {
@@ -59,25 +58,6 @@ namespace CarWebSite.BusinessLayer.Core
                 IsSuccess = true,
                 Message = "Message sent successfully."
             };
-        }
-
-        protected List<ContactMessageResponseDto> GetAllMessagesActionExecution()
-        {
-            using (var db = new AppDbContext())
-            {
-                return db.ContactMessages
-                    .OrderByDescending(m => m.CreatedAt)
-                    .Select(m => new ContactMessageResponseDto
-                    {
-                        Id = m.Id,
-                        Name = m.Name,
-                        Email = m.Email,
-                        Subject = m.Subject,
-                        Message = m.Message,
-                        CreatedAt = m.CreatedAt
-                    })
-                    .ToList();
-            }
         }
     }
 }

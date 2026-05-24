@@ -1,15 +1,51 @@
-using System.Text;
 using CarWebSite.DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using System.Text;
+using CarWebSite.BusinessLayer.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// DbSession 
 DbSession.ConnectionString = builder.Configuration
     .GetConnectionString("DefaultConnection")!;
 
+// JWT Authentication configuration
+var jwtKey = builder.Configuration["Jwt:Key"]!;
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
+var jwtAudience = builder.Configuration["Jwt:Audience"]!;
+
+//JWTSession - direct Auth access
+JwtSession.Issuer = jwtIssuer;
+JwtSession.Audience = jwtAudience;
+JwtSession.SecretKey = jwtKey;
+JwtSession.AccessTokenMinutes = int.Parse(
+    builder.Configuration["Jwt:AccessTokenMinutes"]!);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
+
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -25,82 +61,19 @@ builder.Services.AddControllers()
             new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
 
-var jwtSection = builder.Configuration.GetSection("Jwt");
-
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            ValidIssuer = jwtSection["Issuer"],
-            ValidAudience = jwtSection["Audience"],
-
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSection["Key"]!)),
-
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-
-builder.Services.AddAuthorization();
-
 builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "CarWebSite API",
-        Version = "v1"
-    });
-
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Enter JWT token like: Bearer {your token}"
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
+builder.Services.AddSwaggerGen();   
 
 var app = builder.Build();
 
 app.UseCors("AllowFrontend");
-
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseHttpsRedirection();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
-
+// JWT middleware 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();

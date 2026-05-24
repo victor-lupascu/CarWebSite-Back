@@ -21,6 +21,7 @@ namespace CarWebSite.DataAccess.Context
         public DbSet<CarImage> CarImages { get; set; }
         public DbSet<FavoriteData> Favorites { get; set; }
         public DbSet<ContactMessageData> ContactMessages { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         // Relationships
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -85,6 +86,23 @@ namespace CarWebSite.DataAccess.Context
                 .WithOne(f => f.Car)
                 .HasForeignKey(f => f.CarId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+            // UserData-RefreshTokens: 1:N
+            // Refresh tokens are private, session-specific data tied to a user.
+            // Cascade deletes all tokens when the user is removed, preventing orphan records.
+            modelBuilder.Entity<UserData>()
+                .HasMany(u => u.RefreshTokens)
+                .WithOne(rt => rt.UserData)
+                .HasForeignKey(rt => rt.UserDataId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+            // UserData email uniqueness
+            // Prevents duplicate accounts with the same email at the DB level.
+            modelBuilder.Entity<UserData>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
 
         }

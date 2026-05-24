@@ -1,24 +1,30 @@
-using CarWebSite.BusinessLayer.Core;
+﻿using CarWebSite.BusinessLayer.Core;
 using CarWebSite.BusinessLayer.Interfaces;
+using CarWebSite.Domain.Models.Responses;
 using CarWebSite.Domain.Models.User;
 
 namespace CarWebSite.BusinessLayer.Structure
 {
     public class UserExecution : UserActions, IUserAction
     {
-        public UserResponseDto? RegisterUserAction(UserRegisterDto data)
+        public ActionResponse Register(UserRegisterDto dto)
         {
-            return RegisterUserActionExecution(data);
+            return RegisterUserActionExecution(dto);
         }
 
-        public LoginResponseDto? LoginUserAction(UserLoginDto data)
+        public AuthResponse Login(UserLoginDto dto)
         {
-            return LoginUserActionExecution(data);
+            return LoginUserActionExecution(dto);
         }
 
-        public UserResponseDto? GetUserByIdAction(int id)
+        public AuthResponse Refresh(string refreshToken)
         {
-            return GetUserByIdActionExecution(id);
+            return RefreshTokenActionExecution(refreshToken);
+        }
+
+        public ActionResponse Logout(string refreshToken)
+        {
+            return LogoutActionExecution(refreshToken);
         }
     }
 }

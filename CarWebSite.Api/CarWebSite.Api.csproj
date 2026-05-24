@@ -1,25 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>8b3ea44f-b5e6-408a-8830-b6e17b6d3c51</UserSecretsId>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+  </ItemGroup>
 
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\CarWebSite.BusinessLayer\CarWebSite.BusinessLayer.csproj" />
-		<ProjectReference Include="..\CarWebSite.DataAccess\CarWebSite.DataAccess.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CarWebSite.BusinessLayer\CarWebSite.BusinessLayer.csproj" />
+    <ProjectReference Include="..\CarWebSite.DataAccess\CarWebSite.DataAccess.csproj" />
+  </ItemGroup>
 
 </Project>

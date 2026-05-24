@@ -12,24 +12,14 @@ namespace CarWebSite.BusinessLayer.Structure
             return GetImagesByCarActionExecution(carId);
         }
 
-        public ActionResponse AddImageAction(CarImageCreateDto data)
+        public ActionResponse AddImageAction(CarImageCreateDto data, int userId)
         {
-            return AddImageActionExecution(data);
+            return AddImageActionExecution(data, userId);
         }
 
-        public ActionResponse DeleteImageAction(int id)
+        public ActionResponse DeleteImageAction(int id, int userId, bool isAdmin)
         {
-            return DeleteImageActionExecution(id);
-        }
-
-        public int? GetCarOwnerAction(int carId)
-        {
-            return GetCarOwnerActionExecution(carId);
-        }
-
-        public int? GetImageOwnerAction(int imageId)
-        {
-            return GetImageOwnerActionExecution(imageId);
+            return DeleteImageActionExecution(id, userId, isAdmin);
         }
     }
 }

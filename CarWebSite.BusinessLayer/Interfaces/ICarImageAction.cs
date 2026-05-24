@@ -6,9 +6,7 @@ namespace CarWebSite.BusinessLayer.Interfaces
     public interface ICarImageAction
     {
         List<CarImageResponseDto> GetImagesByCarAction(int carId);
-        ActionResponse AddImageAction(CarImageCreateDto data);
-        ActionResponse DeleteImageAction(int id);
-        int? GetCarOwnerAction(int carId);
-        int? GetImageOwnerAction(int imageId);
+        ActionResponse AddImageAction(CarImageCreateDto data, int userId);
+        ActionResponse DeleteImageAction(int id, int userId, bool isAdmin);
     }
 }

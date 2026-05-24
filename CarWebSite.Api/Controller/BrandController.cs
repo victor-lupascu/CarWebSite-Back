@@ -8,7 +8,6 @@ namespace CarWebSite.Api.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class BrandController : ControllerBase
     {
         private readonly IBrandAction _brandAction;
@@ -36,7 +35,7 @@ namespace CarWebSite.Api.Controller
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create([FromBody] BrandCreateDto data)
         {
             var response = _brandAction.CreateBrandAction(data);
@@ -50,5 +49,6 @@ namespace CarWebSite.Api.Controller
             var response = _brandAction.DeleteBrandAction(id);
             return Ok(response);
         }
+
     }
 }

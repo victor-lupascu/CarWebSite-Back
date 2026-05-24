@@ -82,7 +82,7 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
-        protected ActionResponse RemoveFavoriteActionExecution(int id)
+        protected ActionResponse RemoveFavoriteActionExecution(int id, int userId)
         {
             using (var db = new AppDbContext())
             {
@@ -97,6 +97,16 @@ namespace CarWebSite.BusinessLayer.Core
                     };
                 }
 
+                // Owner check
+                if(entity.UserDataId != userId)
+                {
+                    return new ActionResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Invalid operation"
+                    };
+                }
+
                 db.Favorites.Remove(entity);
                 db.SaveChanges();
             }
@@ -108,21 +118,11 @@ namespace CarWebSite.BusinessLayer.Core
             };
         }
 
-        protected int? GetFavoriteOwnerActionExecution(int id)
-        {
-            using (var db = new AppDbContext())
-            {
-                var entity = db.Favorites.FirstOrDefault(f => f.Id == id);
-                return entity?.UserDataId;
-            }
-        }
-
         private FavoriteResponseDto MapToDto(FavoriteData entity)
         {
             return new FavoriteResponseDto
             {
                 Id = entity.Id,
-                UserId = entity.UserDataId,
                 CarId = entity.CarId,
                 CreatedAt = entity.CreatedAt,
                 Car = entity.Car != null ? new CarResponseDto

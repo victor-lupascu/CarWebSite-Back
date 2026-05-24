@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.2" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.2" />
+    <ProjectReference Include="..\CarWebSite.DataAccess\CarWebSite.DataAccess.csproj" />
+    <ProjectReference Include="..\CarWebSite.Domain\CarWebSite.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarWebSite.DataAccess\CarWebSite.DataAccess.csproj" />
-    <ProjectReference Include="..\CarWebSite.Domain\CarWebSite.Domain.csproj" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.2" />
   </ItemGroup>
 
 </Project>
