@@ -22,9 +22,9 @@ namespace CarWebSite.BusinessLayer.Structure
             return CreateAnnouncementActionExecution(data, userId);
         }
 
-        public ActionResponse UpdateAnnouncementAction(AnnouncementUpdateDto data)
+        public ActionResponse UpdateAnnouncementAction(int id,AnnouncementUpdateDto data, int userId, bool isAdmin)
         {
-            return UpdateAnnouncementActionExecution(data);
+            return UpdateAnnouncementActionExecution(id, data, userId, isAdmin);
         }
 
         public ActionResponse DeleteAnnouncementAction(int id, int userId, bool isAdmin)
