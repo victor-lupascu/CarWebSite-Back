@@ -21,8 +21,8 @@ namespace CarWebSite.Domain.Models.Announcement
         public CarCondition? Condition { get; set; }
         public string? Description { get; set; }
         public BodyType? BodyType { get; set; }
-        public string? Color { get; set; }
-        public int? Doors { get; set; }
+        public ColorCategory? Color { get; set; }
+        public NumberOfDoors? Doors { get; set; }
         public int? Seats { get; set; }
         public string? EngineSize { get; set; }
         public int? Horsepower { get; set; }

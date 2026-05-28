@@ -43,6 +43,15 @@ namespace CarWebSite.Api.Controller
             return Ok(response);
         }
 
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, [FromBody] AnnouncementUpdateDto data)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var isAdmin = User.IsInRole("Admin");
+            var response = _announcementAction.UpdateAnnouncementAction(id, data, userId, isAdmin);
+            return Ok(response);
+        }
+
         [HttpDelete]
         public IActionResult Delete(int id)
         {
