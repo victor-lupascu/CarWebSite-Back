@@ -230,6 +230,7 @@ namespace CarWebSite.BusinessLayer.Core
                 UserId = entity.UserDataId,
                 OwnerName = entity.UserData != null ? entity.UserData.FullName : "",
                 OwnerPhone = entity.UserData != null ? entity.UserData.PhoneNumber : null,
+                OwnerCity = entity.UserData != null ? entity.UserData.City : null,
                 CarId = entity.CarId,
                 Model = entity.Car != null && entity.Car.Model != null ? entity.Car.Model : "",
                 Year = entity.Car?.Year ?? 0,

@@ -20,6 +20,7 @@ namespace CarWebSite.Domain.Models.Announcement
         public int UserId { get; set; }
         public string OwnerName { get; set; } = string.Empty;
         public string? OwnerPhone { get; set; }
+        public string? OwnerCity { get; set; }
 
         // Car fields
         public int CarId { get; set; }
