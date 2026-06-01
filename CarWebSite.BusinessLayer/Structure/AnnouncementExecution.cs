@@ -17,7 +17,7 @@ namespace CarWebSite.BusinessLayer.Structure
             return GetAnnouncementByIdActionExecution(id);
         }
 
-        public ActionResponse CreateAnnouncementAction(AnnouncementCreateDto data, int userId)
+        public AnnouncementResponseDto? CreateAnnouncementAction(AnnouncementCreateDto data, int userId)
         {
             return CreateAnnouncementActionExecution(data, userId);
         }
