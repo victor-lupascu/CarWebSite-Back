@@ -40,6 +40,12 @@ namespace CarWebSite.Api.Controller
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var response = _announcementAction.CreateAnnouncementAction(data, userId);
+
+            if(response == null)
+            {
+                return BadRequest(new { message = "Invalid announcement data." });
+            }
+
             return Ok(response);
         }
 

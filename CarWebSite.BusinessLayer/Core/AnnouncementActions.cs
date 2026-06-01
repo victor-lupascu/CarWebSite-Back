@@ -58,16 +58,14 @@ namespace CarWebSite.BusinessLayer.Core
             return MapToDto(entity);
         }
 
-        protected ActionResponse CreateAnnouncementActionExecution(AnnouncementCreateDto data, int userId)
+        protected AnnouncementResponseDto? CreateAnnouncementActionExecution(AnnouncementCreateDto data, int userId)
         {
             if (string.IsNullOrWhiteSpace(data.Title))
             {
-                return new ActionResponse
-                {
-                    IsSuccess = false,
-                    Message = "Title is required."
-                };
+                return null;
             }
+
+            int newAnnouncementId;
 
             using (var db = new AppDbContext())
             {
@@ -103,13 +101,11 @@ namespace CarWebSite.BusinessLayer.Core
 
                 db.Announcements.Add(announcement);
                 db.SaveChanges();
+                newAnnouncementId = announcement.Id;
             }
 
-            return new ActionResponse
-            {
-                IsSuccess = true,
-                Message = "Announcement created successfully."
-            };
+            return GetAnnouncementByIdActionExecution(newAnnouncementId);
+
         }
 
         protected ActionResponse UpdateAnnouncementActionExecution(int id, AnnouncementUpdateDto data, int userId, bool isAsmin)
