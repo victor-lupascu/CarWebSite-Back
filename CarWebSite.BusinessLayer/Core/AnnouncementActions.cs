@@ -89,6 +89,18 @@ namespace CarWebSite.BusinessLayer.Core
                     BrandId = data.BrandId
                 };
 
+                if (data.Images != null && data.Images.Any())
+                {
+                    foreach (var img in data.Images)
+                    {
+                        car.Images.Add(new CarImage
+                        {
+                            Url = img.Url,
+                            IsCover = img.IsCover
+                        });
+                    }
+                }
+
                 var announcement = new Announcement
                 {
                     Title = data.Title,
