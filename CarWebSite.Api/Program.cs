@@ -6,6 +6,9 @@ using System.Text;
 using CarWebSite.BusinessLayer.Auth;
 using CarWebSite.Api.Middleware;
 using Microsoft.AspNetCore.Mvc;
+using CarWebSite.DataAccess.Context;
+using CarWebSite.Domain.Entities;
+using CarWebSite.Domain.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,4 +105,65 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+SeedTestingAccounts();
 app.Run();
+
+static void SeedTestingAccounts()
+{
+    try
+    {
+        using var db = new AppDbContext();
+        EnsureTestingUser(db, "admin", "Admin User", "admin", UserRole.Admin);
+        EnsureTestingUser(db, "user", "Test User", "admin", UserRole.User);
+        db.SaveChanges();
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine($"Testing account seed skipped: {ex.Message}");
+    }
+}
+
+static void EnsureTestingUser(
+    AppDbContext db,
+    string email,
+    string fullName,
+    string password,
+    UserRole role)
+{
+    var user = db.Users.FirstOrDefault(u => u.Email == email);
+    var needsPassword = user == null || !PasswordMatches(password, user.Password);
+    var hashedPassword = needsPassword ? BCrypt.Net.BCrypt.HashPassword(password) : user!.Password;
+
+    if (user == null)
+    {
+        db.Users.Add(new UserData
+        {
+            FullName = fullName,
+            Email = email,
+            Password = hashedPassword,
+            Role = role,
+            RegisteredOn = DateTime.UtcNow,
+            FailedLoginAttempts = 0,
+            LockedUntil = null
+        });
+        return;
+    }
+
+    user.FullName = fullName;
+    user.Password = hashedPassword;
+    user.Role = role;
+    user.FailedLoginAttempts = 0;
+    user.LockedUntil = null;
+}
+
+static bool PasswordMatches(string password, string hash)
+{
+    try
+    {
+        return BCrypt.Net.BCrypt.Verify(password, hash);
+    }
+    catch
+    {
+        return false;
+    }
+}
