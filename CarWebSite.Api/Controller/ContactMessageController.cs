@@ -23,7 +23,7 @@ namespace CarWebSite.Api.Controller
         public IActionResult Send([FromBody] ContactMessageCreateDto data)
         {
             var response = _contactAction.SendMessageAction(data);
-            return Ok(response);
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
     }
 }

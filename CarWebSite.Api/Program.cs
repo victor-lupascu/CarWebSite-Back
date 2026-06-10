@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CarWebSite.BusinessLayer.Auth;
+using CarWebSite.Api.Middleware;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,16 +14,19 @@ DbSession.ConnectionString = builder.Configuration
     .GetConnectionString("DefaultConnection")!;
 
 // JWT Authentication configuration
-var jwtKey = builder.Configuration["Jwt:Key"]!;
-var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
-var jwtAudience = builder.Configuration["Jwt:Audience"]!;
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? "presentation-dev-key-change-before-production-32chars";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "CarWebSiteApi";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "CarWebSiteClients";
 
 //JWTSession - direct Auth access
 JwtSession.Issuer = jwtIssuer;
 JwtSession.Audience = jwtAudience;
 JwtSession.SecretKey = jwtKey;
-JwtSession.AccessTokenMinutes = int.Parse(
-    builder.Configuration["Jwt:AccessTokenMinutes"]!);
+JwtSession.AccessTokenMinutes = int.TryParse(
+    builder.Configuration["Jwt:AccessTokenMinutes"], out var accessTokenMinutes)
+        ? accessTokenMinutes
+        : 60;
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -61,6 +66,26 @@ builder.Services.AddControllers()
             new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
 
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(item => item.Value?.Errors.Count > 0)
+            .ToDictionary(
+                item => item.Key,
+                item => item.Value!.Errors.Select(error => error.ErrorMessage).ToArray());
+
+        return new BadRequestObjectResult(new
+        {
+            status = StatusCodes.Status400BadRequest,
+            title = "Invalid request",
+            message = "The request contains invalid or missing fields.",
+            errors
+        });
+    };
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();   
 
@@ -70,6 +95,7 @@ app.UseCors("AllowFrontend");
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
+app.UseMiddleware<ApiExceptionMiddleware>();
 
 // JWT middleware 
 app.UseAuthentication();

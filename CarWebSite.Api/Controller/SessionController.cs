@@ -25,7 +25,7 @@ namespace CarWebSite.Api.Controller
         public IActionResult Register([FromBody] UserRegisterDto dto)
         {
             var response = _userAction.Register(dto);
-            return Ok(response);
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
         [HttpPost("auth")]
@@ -33,7 +33,7 @@ namespace CarWebSite.Api.Controller
         public IActionResult Login([FromBody] UserLoginDto dto)
         {
             var response = _userAction.Login(dto);
-            return Ok(response);
+            return response.IsSuccess ? Ok(response) : Unauthorized(response);
         }
 
         [HttpPost("refresh")]
@@ -41,14 +41,14 @@ namespace CarWebSite.Api.Controller
         public IActionResult Refresh([FromBody] RefreshTokenRequestDto dto)
         {
             var response = _userAction.Refresh(dto.RefreshToken);
-            return Ok(response);
+            return response.IsSuccess ? Ok(response) : Unauthorized(response);
         }
 
         [HttpPost("logout")]
         public IActionResult Logout([FromBody] RefreshTokenRequestDto dto)
         {
             var response = _userAction.Logout(dto.RefreshToken);
-            return Ok(response);
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
     }
 }

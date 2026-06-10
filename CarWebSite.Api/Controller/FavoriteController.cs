@@ -1,5 +1,6 @@
 using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
+using CarWebSite.Domain.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -33,7 +34,7 @@ namespace CarWebSite.Api.Controller
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var response = _favoriteAction.AddFavoriteAction(carId, userId);
-            return Ok(response);
+            return ToHttpResponse(response);
         }
 
         [Authorize]
@@ -42,7 +43,25 @@ namespace CarWebSite.Api.Controller
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var response = _favoriteAction.RemoveFavoriteAction(id, userId);
-            return Ok(response);
+            return ToHttpResponse(response);
+        }
+
+        private IActionResult ToHttpResponse(ActionResponse response)
+        {
+            if (response.IsSuccess) return Ok(response);
+
+            var message = response.Message ?? "Operation failed.";
+            if (message.Contains("not found", StringComparison.OrdinalIgnoreCase))
+            {
+                return NotFound(response);
+            }
+
+            if (message.Contains("invalid operation", StringComparison.OrdinalIgnoreCase))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, response);
+            }
+
+            return BadRequest(response);
         }
     }
 }

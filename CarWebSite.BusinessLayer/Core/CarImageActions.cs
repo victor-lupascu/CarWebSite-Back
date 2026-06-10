@@ -107,7 +107,7 @@ namespace CarWebSite.BusinessLayer.Core
                 if(!isAdmin)
                 {
                     var announcement = db.Announcements.FirstOrDefault(a => a.CarId == entity.CarId);
-                    if(announcement == null || announcement.CarId != userId)
+                    if(announcement == null || announcement.UserDataId != userId)
                     {
                         return new ActionResponse
                         {

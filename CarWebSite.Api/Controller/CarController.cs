@@ -30,7 +30,7 @@ namespace CarWebSite.Api.Controller
         public IActionResult GetById(int id)
         {
             var car = _carAction.GetCarByIdAction(id);
-            return car == null ? NotFound() : Ok(car);
+            return car == null ? NotFound(new { message = "Car not found." }) : Ok(car);
         }
     }
 }

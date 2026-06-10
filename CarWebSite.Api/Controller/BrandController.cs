@@ -1,6 +1,7 @@
 using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.Brand;
+using CarWebSite.Domain.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +32,7 @@ namespace CarWebSite.Api.Controller
         public IActionResult GetById(int id)
         {
             var brand = _brandAction.GetBrandByIdAction(id);
-            return brand == null ? NotFound() : Ok(brand);
+            return brand == null ? NotFound(new { message = "Brand not found." }) : Ok(brand);
         }
 
         [HttpPost]
@@ -39,7 +40,7 @@ namespace CarWebSite.Api.Controller
         public IActionResult Create([FromBody] BrandCreateDto data)
         {
             var response = _brandAction.CreateBrandAction(data);
-            return Ok(response);
+            return ToHttpResponse(response);
         }
 
         [HttpDelete]
@@ -47,8 +48,16 @@ namespace CarWebSite.Api.Controller
         public IActionResult Delete(int id)
         {
             var response = _brandAction.DeleteBrandAction(id);
-            return Ok(response);
+            return ToHttpResponse(response);
         }
 
+        private IActionResult ToHttpResponse(ActionResponse response)
+        {
+            if (response.IsSuccess) return Ok(response);
+            var message = response.Message ?? "Operation failed.";
+            return message.Contains("not found", StringComparison.OrdinalIgnoreCase)
+                ? NotFound(response)
+                : BadRequest(response);
+        }
     }
 }

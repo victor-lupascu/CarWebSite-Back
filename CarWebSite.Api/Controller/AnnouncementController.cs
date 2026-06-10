@@ -4,6 +4,7 @@ using CarWebSite.Domain.Models.Announcement;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using CarWebSite.Domain.Models.Responses;
 
 namespace CarWebSite.Api.Controller
 {
@@ -32,7 +33,9 @@ namespace CarWebSite.Api.Controller
         public IActionResult GetById(int id)
         {
             var announcement = _announcementAction.GetAnnouncementByIdAction(id);
-            return announcement == null ? NotFound() : Ok(announcement);
+            return announcement == null
+                ? NotFound(new { message = "Announcement not found." })
+                : Ok(announcement);
         }
 
         [HttpPost]
@@ -46,7 +49,7 @@ namespace CarWebSite.Api.Controller
                 return BadRequest(new { message = "Invalid announcement data." });
             }
 
-            return Ok(response);
+            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
         }
 
         [HttpPut("{id}")]
@@ -55,7 +58,7 @@ namespace CarWebSite.Api.Controller
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var isAdmin = User.IsInRole("Admin");
             var response = _announcementAction.UpdateAnnouncementAction(id, data, userId, isAdmin);
-            return Ok(response);
+            return ToHttpResponse(response);
         }
 
         [HttpDelete]
@@ -64,7 +67,25 @@ namespace CarWebSite.Api.Controller
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var isAdmin = User.IsInRole("Admin");
             var response = _announcementAction.DeleteAnnouncementAction(id, userId, isAdmin);
-            return Ok(response);
+            return ToHttpResponse(response);
+        }
+
+        private IActionResult ToHttpResponse(ActionResponse response)
+        {
+            if (response.IsSuccess) return Ok(response);
+
+            var message = response.Message ?? "Operation failed.";
+            if (message.Contains("not found", StringComparison.OrdinalIgnoreCase))
+            {
+                return NotFound(response);
+            }
+
+            if (message.Contains("operation failed", StringComparison.OrdinalIgnoreCase))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, response);
+            }
+
+            return BadRequest(response);
         }
     }
 }

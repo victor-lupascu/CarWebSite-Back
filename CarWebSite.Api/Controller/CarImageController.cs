@@ -1,6 +1,7 @@
 using CarWebSite.BusinessLayer;
 using CarWebSite.BusinessLayer.Interfaces;
 using CarWebSite.Domain.Models.CarImage;
+using CarWebSite.Domain.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -32,7 +33,7 @@ namespace CarWebSite.Api.Controller
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var response = _carImageAction.AddImageAction(data, userId);
-            return Ok(response);
+            return ToHttpResponse(response);
         }
 
         [HttpDelete("{id}")]
@@ -41,7 +42,25 @@ namespace CarWebSite.Api.Controller
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var isAdmin = User.IsInRole("Admin");
             var response = _carImageAction.DeleteImageAction(id, userId, isAdmin);
-            return Ok(response);
+            return ToHttpResponse(response);
+        }
+
+        private IActionResult ToHttpResponse(ActionResponse response)
+        {
+            if (response.IsSuccess) return Ok(response);
+
+            var message = response.Message ?? "Operation failed.";
+            if (message.Contains("not found", StringComparison.OrdinalIgnoreCase))
+            {
+                return NotFound(response);
+            }
+
+            if (message.Contains("operation failed", StringComparison.OrdinalIgnoreCase))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, response);
+            }
+
+            return BadRequest(response);
         }
     }
 }
