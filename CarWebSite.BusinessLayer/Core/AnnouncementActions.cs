@@ -174,6 +174,22 @@ namespace CarWebSite.BusinessLayer.Core
                     if (data.VIN != null) announcement.Car.VIN = data.VIN;
                     // Relinks the car to another brand by the foreign key(BrandId)
                     if (data.BrandId != null) announcement.Car.BrandId = data.BrandId.Value;
+
+                    //Replace images if a new list was provided
+                    if (data.Images != null)
+                    {
+                        var oldImages = db.CarImages.Where(ci => ci.CarId == announcement.Car.Id).ToList();
+                        db.CarImages.RemoveRange(oldImages);
+
+                        foreach( var img in data.Images)
+                        {
+                            announcement.Car.Images.Add(new CarImage
+                            {
+                                Url = img.Url,
+                                IsCover = img.IsCover
+                            });
+                        }
+                    }
                 }
                 db.SaveChanges();
             }
