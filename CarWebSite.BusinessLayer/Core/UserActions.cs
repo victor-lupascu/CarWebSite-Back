@@ -1,4 +1,5 @@
 ﻿using CarWebSite.BusinessLayer.Auth;
+using CarWebSite.BusinessLayer.Validators;
 using CarWebSite.DataAccess.Context;
 using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Enums;
@@ -27,6 +28,23 @@ namespace CarWebSite.BusinessLayer.Core
                         " and contain uppercase, digit and special character."
                     };
                 }
+
+                // Validate input
+                if (!UserValidators.IsValidFullName(dto.FullName))
+                    return new ActionResponse { IsSuccess = false, ErrorCode = "INVALID_FULLNAME" };
+
+                if (!UserValidators.IsValidEmail(dto.Email))
+                    return new ActionResponse { IsSuccess = false, ErrorCode = "INVALID_EMAIL" };
+
+                if (!UserValidators.IsValidPhoneNumber(dto.PhoneNumber))
+                    return new ActionResponse { IsSuccess = false, ErrorCode = "INVALID_PHONE" };
+
+                if (!UserValidators.IsValidCity(dto.City))
+                    return new ActionResponse { IsSuccess = false, ErrorCode = "INVALID_CITY" };
+
+
+
+
 
                 using (var db = new AppDbContext())
                 {
