@@ -26,5 +26,15 @@ namespace CarWebSite.BusinessLayer.Structure
         {
             return LogoutActionExecution(refreshToken);
         }
+
+        public ProfileResponse UpdateProfile(UserProfileUpdateDto dto, int userId)
+        {
+            return UpdateProfileActionExecution(dto, userId);
+        }
+
+        public ProfileResponse GetProfile(int userId)
+        {
+            return GetProfileActionExecution(userId);
+        }
     }
 }

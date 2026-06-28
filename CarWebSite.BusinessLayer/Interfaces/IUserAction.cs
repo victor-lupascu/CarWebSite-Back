@@ -9,5 +9,7 @@ namespace CarWebSite.BusinessLayer.Interfaces
         AuthResponse Login(UserLoginDto dto);
         AuthResponse Refresh(string refreshToken);
         ActionResponse Logout(string refreshToken);
+        ProfileResponse UpdateProfile(UserProfileUpdateDto dto, int userId);
+        ProfileResponse GetProfile(int userId);
     }
 }
