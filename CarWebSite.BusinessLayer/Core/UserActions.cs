@@ -42,10 +42,6 @@ namespace CarWebSite.BusinessLayer.Core
                 if (!UserValidators.IsValidCity(dto.City))
                     return new ActionResponse { IsSuccess = false, ErrorCode = "INVALID_CITY" };
 
-
-
-
-
                 using (var db = new AppDbContext())
                 {
                     // Application level email uniqueness check
@@ -265,6 +261,80 @@ namespace CarWebSite.BusinessLayer.Core
                 };
             }
         }
+
+        protected ProfileResponse UpdateProfileActionExecution(UserProfileUpdateDto dto, int userId)
+        {
+            // Validate only the fields that are present (partial update)
+            if (dto.FullName != null && !UserValidators.IsValidFullName(dto.FullName))
+                return new ProfileResponse { IsSuccess = false, ErrorCode = "INVALID_FULLNAME" };
+
+            if (dto.PhoneNumber != null && !UserValidators.IsValidPhoneNumber(dto.PhoneNumber))
+                return new ProfileResponse { IsSuccess = false, ErrorCode = "INVALID_PHONE" };
+
+            if (dto.City != null && !UserValidators.IsValidCity(dto.City))
+                return new ProfileResponse { IsSuccess = false, ErrorCode = "INVALID_CITY" };
+
+            using (var db = new AppDbContext())
+            {
+                var user = db.Users.FirstOrDefault(u => u.Id == userId);
+                if (user == null)
+                    return new ProfileResponse { IsSuccess = false, ErrorCode = "USER_NOT_FOUND"};
+
+                if (dto.FullName != null)
+                    user.FullName = dto.FullName.Trim();
+
+                if (dto.PhoneNumber != null)
+                    user.PhoneNumber = string.IsNullOrWhiteSpace(dto.PhoneNumber) ? null : dto.PhoneNumber.Trim();
+
+                if (dto.City != null)
+                    user.City = string.IsNullOrWhiteSpace(dto.City) ? null : dto.City.Trim();
+
+                db.SaveChanges();
+
+                return new ProfileResponse
+                {
+                    IsSuccess = true,
+                    Message = "Profile updated successfully.",
+                    User = new UserResponseDto
+                    {
+                        Id = user.Id,
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber ?? string.Empty,
+                        City = user.City ?? string.Empty,
+                        Role = user.Role.ToString(),
+                        RegisteredOn = user.RegisteredOn
+                    }
+                };
+            }
+        }
+
+
+        protected ProfileResponse GetProfileActionExecution(int userId)
+        {
+            using (var db = new AppDbContext())
+            {
+                var user = db.Users.FirstOrDefault(u => u.Id == userId);
+                if (user == null)
+                    return new ProfileResponse { IsSuccess = false, ErrorCode = "USER_NOT_FOUND" };
+
+                return new ProfileResponse
+                {
+                    IsSuccess = true,
+                    User = new UserResponseDto
+                    {
+                        Id = user.Id,
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber ?? string.Empty,
+                        City = user.City ?? string.Empty,
+                        Role = user.Role.ToString(),
+                        RegisteredOn = user.RegisteredOn
+                    }
+                };
+            }
+        }
+
 
         // Server-side complexity check
         private static bool IsPasswordComplex(string password)
