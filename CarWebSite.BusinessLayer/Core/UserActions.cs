@@ -5,6 +5,7 @@ using CarWebSite.Domain.Entities;
 using CarWebSite.Domain.Enums;
 using CarWebSite.Domain.Models.Responses;
 using CarWebSite.Domain.Models.User;
+using CarWebSite.Domain.Constants;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
@@ -24,23 +25,22 @@ namespace CarWebSite.BusinessLayer.Core
                     return new ActionResponse
                     {
                         IsSuccess = false,
-                        Message = "Password must be at least 8 characters" +
-                        " and contain uppercase, digit and special character."
+                       ErrorCode = ErrorCodes.WeakPassword
                     };
                 }
 
                 // Validate input
                 if (!UserValidators.IsValidFullName(dto.FullName))
-                    return new ActionResponse { IsSuccess = false, ErrorCode = "INVALID_FULLNAME" };
+                    return new ActionResponse { IsSuccess = false, ErrorCode = ErrorCodes.InvalidFullName };
 
                 if (!UserValidators.IsValidEmail(dto.Email))
-                    return new ActionResponse { IsSuccess = false, ErrorCode = "INVALID_EMAIL" };
+                    return new ActionResponse { IsSuccess = false, ErrorCode = ErrorCodes.InvalidEmail };
 
                 if (!UserValidators.IsValidPhoneNumber(dto.PhoneNumber))
-                    return new ActionResponse { IsSuccess = false, ErrorCode = "INVALID_PHONE" };
+                    return new ActionResponse { IsSuccess = false, ErrorCode = ErrorCodes.InvalidPhone };
 
                 if (!UserValidators.IsValidCity(dto.City))
-                    return new ActionResponse { IsSuccess = false, ErrorCode = "INVALID_CITY" };
+                    return new ActionResponse { IsSuccess = false, ErrorCode = ErrorCodes.InvalidCity };
 
                 using (var db = new AppDbContext())
                 {
@@ -50,7 +50,7 @@ namespace CarWebSite.BusinessLayer.Core
                         return new ActionResponse
                         {
                             IsSuccess = false,
-                            Message = "An account with this email already exists."
+                            ErrorCode = ErrorCodes.EmailExists
                         };
                     }
 
@@ -88,7 +88,7 @@ namespace CarWebSite.BusinessLayer.Core
                 return new ActionResponse
                 {
                     IsSuccess = false,
-                    Message = "An account with this email already exists."
+                    ErrorCode = ErrorCodes.EmailExists
                 };
             }
         }
@@ -266,19 +266,19 @@ namespace CarWebSite.BusinessLayer.Core
         {
             // Validate only the fields that are present (partial update)
             if (dto.FullName != null && !UserValidators.IsValidFullName(dto.FullName))
-                return new ProfileResponse { IsSuccess = false, ErrorCode = "INVALID_FULLNAME" };
+                return new ProfileResponse { IsSuccess = false, ErrorCode = ErrorCodes.InvalidFullName };
 
             if (dto.PhoneNumber != null && !UserValidators.IsValidPhoneNumber(dto.PhoneNumber))
-                return new ProfileResponse { IsSuccess = false, ErrorCode = "INVALID_PHONE" };
+                return new ProfileResponse { IsSuccess = false, ErrorCode = ErrorCodes.InvalidPhone };
 
             if (dto.City != null && !UserValidators.IsValidCity(dto.City))
-                return new ProfileResponse { IsSuccess = false, ErrorCode = "INVALID_CITY" };
+                return new ProfileResponse { IsSuccess = false, ErrorCode = ErrorCodes.InvalidCity };
 
             using (var db = new AppDbContext())
             {
                 var user = db.Users.FirstOrDefault(u => u.Id == userId);
                 if (user == null)
-                    return new ProfileResponse { IsSuccess = false, ErrorCode = "USER_NOT_FOUND"};
+                    return new ProfileResponse { IsSuccess = false, ErrorCode = ErrorCodes.UserNotFound};
 
                 if (dto.FullName != null)
                     user.FullName = dto.FullName.Trim();
@@ -316,7 +316,7 @@ namespace CarWebSite.BusinessLayer.Core
             {
                 var user = db.Users.FirstOrDefault(u => u.Id == userId);
                 if (user == null)
-                    return new ProfileResponse { IsSuccess = false, ErrorCode = "USER_NOT_FOUND" };
+                    return new ProfileResponse { IsSuccess = false, ErrorCode = ErrorCodes.UserNotFound };
 
                 return new ProfileResponse
                 {
